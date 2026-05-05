@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#0b1220">
+    <meta name="theme-color" content="#080d16">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Trainingsplan">
-    <meta name="description" content="Moderne iPhone-Trainingsplan-Web-App für Ale und Nevio mit Jogging, Krafttraining und Fortschritt.">
+    <meta name="description" content="Uebersichtliche iPhone-Trainingsplan-Web-App fuer Ale und Nevio.">
     <title>Trainingsplan</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
@@ -18,7 +18,7 @@
     <main class="phone-shell" id="app">
       <section class="login-view" id="loginView" aria-labelledby="loginTitle">
         <div class="login-panel glass-panel">
-          <p class="eyebrow">Schülertraining</p>
+          <p class="eyebrow">Training</p>
           <h1 id="loginTitle">Trainingsplan</h1>
           <p class="login-subtitle">Wähle dein Profil</p>
 
@@ -26,12 +26,12 @@
             <button class="profile-card" type="button" data-login-profile="ale">
               <span class="profile-mark">A</span>
               <span class="profile-name">Ale</span>
-              <span class="profile-meta">Muskelaufbau · Ausdauer · Unihockey</span>
+              <span class="profile-meta">Jogging, Kraft, Fortschritt</span>
             </button>
             <button class="profile-card" type="button" data-login-profile="nevio">
               <span class="profile-mark">N</span>
               <span class="profile-name">Nevio</span>
-              <span class="profile-meta">Joggingplan · eigener Fortschritt</span>
+              <span class="profile-meta">Joggingplan, eigener Fortschritt</span>
             </button>
           </div>
 
@@ -47,51 +47,17 @@
       </section>
 
       <section class="app-view is-hidden" id="mainView" aria-label="Trainingsplan App">
-        <header class="app-header">
-          <div>
-            <p class="eyebrow">Trainingsplan</p>
-            <h1>Trainingsplan</h1>
-            <p class="today-line" id="todayLine">Heute: Montag</p>
-            <p class="profile-line" id="profileLine">Profil: Ale</p>
-          </div>
-          <button class="ghost-button" id="switchProfileButton" type="button">Profil wechseln</button>
-        </header>
-
         <div class="content-stack">
           <section class="tab-panel is-active" id="tab-today" data-panel="today" aria-labelledby="nav-today">
             <div id="todayContent"></div>
           </section>
 
+          <section class="tab-panel" id="tab-week" data-panel="week" aria-labelledby="nav-week">
+            <div id="weekContent"></div>
+          </section>
+
           <section class="tab-panel" id="tab-jogging" data-panel="jogging" aria-labelledby="nav-jogging">
-            <div class="section-heading">
-              <p class="eyebrow">Jogging</p>
-              <h2>80 % locker, 20 % schnell</h2>
-              <p>Die meisten Läufe bleiben bewusst entspannt. Tempo kommt nur dosiert über Intervalle.</p>
-            </div>
-            <div class="card-grid" id="joggingCards"></div>
-            <div class="glass-card">
-              <div class="card-header">
-                <div>
-                  <p class="card-kicker">Steigerung</p>
-                  <h3>Wochenplan langer Lauf</h3>
-                </div>
-              </div>
-              <div class="table-wrap">
-                <table class="progression-table">
-                  <thead>
-                    <tr>
-                      <th>Woche</th>
-                      <th>Langer Lauf</th>
-                    </tr>
-                  </thead>
-                  <tbody id="progressionRows"></tbody>
-                </table>
-              </div>
-            </div>
-            <article class="notice-card">
-              <strong>Nicht jeden Lauf Vollgas.</strong>
-              <span>Die meisten Läufe locker. Schnell nur bei Intervallen.</span>
-            </article>
+            <div id="joggingContent"></div>
           </section>
 
           <section class="tab-panel" id="tab-strength" data-panel="strength" aria-labelledby="nav-strength">
@@ -105,19 +71,23 @@
 
         <nav class="bottom-tabs" aria-label="Hauptnavigation">
           <button class="tab-button is-active" id="nav-today" type="button" data-tab="today">
-            <span class="tab-icon" aria-hidden="true">●</span>
+            <span class="tab-icon tab-icon-today" aria-hidden="true"></span>
             <span>Heute</span>
           </button>
+          <button class="tab-button" id="nav-week" type="button" data-tab="week">
+            <span class="tab-icon tab-icon-week" aria-hidden="true"></span>
+            <span>Woche</span>
+          </button>
           <button class="tab-button" id="nav-jogging" type="button" data-tab="jogging">
-            <span class="tab-icon" aria-hidden="true">⌁</span>
+            <span class="tab-icon tab-icon-jogging" aria-hidden="true"></span>
             <span>Jogging</span>
           </button>
           <button class="tab-button" id="nav-strength" type="button" data-tab="strength">
-            <span class="tab-icon" aria-hidden="true">◆</span>
+            <span class="tab-icon tab-icon-strength" aria-hidden="true"></span>
             <span>Kraft</span>
           </button>
           <button class="tab-button" id="nav-progress" type="button" data-tab="progress">
-            <span class="tab-icon" aria-hidden="true">▰</span>
+            <span class="tab-icon tab-icon-progress" aria-hidden="true"></span>
             <span>Fortschritt</span>
           </button>
         </nav>

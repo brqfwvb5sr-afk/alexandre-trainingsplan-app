@@ -1,6 +1,6 @@
 const storageKeys = {
   profile: "trainingsplan.currentProfile",
-  state: "trainingsplan.state.v1"
+  state: "trainingsplan.state.v2"
 };
 
 const profiles = {
@@ -9,224 +9,244 @@ const profiles = {
 };
 
 const weekdays = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-const weekOrder = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+const weekdayShort = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+const weekIndexes = [1, 2, 3, 4, 5, 6, 0];
 
-const joggingTypes = [
-  {
-    title: "Lockerer Lauf",
-    kicker: "Grundausdauer",
-    details: ["Tempo: reden können", "Distanz: 2–3 km", "Gefühl: ruhig und kontrolliert"],
-    note: "Perfekt für Schultage und als Basis für bessere Ausdauer."
-  },
-  {
-    title: "Intervalllauf",
-    kicker: "Schneller werden",
-    details: ["1 km einlaufen", "3×300 m schnell", "Dazwischen gehen", "Auslaufen"],
-    note: "Nur 1× pro Woche. Schnell heißt sauber schnell, nicht komplett zerstören."
-  },
-  {
-    title: "Langer Lauf",
-    kicker: "Ausdauer aufbauen",
-    details: ["Start: 3 km", "Steigerung: +0.5 km pro Woche", "Nicht Vollgas laufen"],
-    note: "Wenn es sich schwer anfühlt, bleibt die Distanz eine Woche gleich."
-  }
-];
-
-const dailyPlans = {
+const planByProfile = {
   ale: {
     1: {
-      title: "Jogging locker",
-      description: "Heute steht ein ruhiger Lauf an. Ziel ist ein entspannter Start in die Woche.",
-      intensity: "Locker, reden möglich",
-      duration: "2.0–2.5 km plus optional 10 Minuten Dehnen",
-      tasks: [
-        ["Lauf", "2.0–2.5 km locker"],
-        ["Optional", "10 Minuten Dehnen"]
-      ],
-      hint: "Bleib bewusst langsam. Du sollst danach noch Energie haben."
+      category: "Jogging",
+      title: "Lockerer Lauf",
+      amount: "2.0-2.5 km",
+      intensity: "Locker",
+      explanation: "Du solltest noch reden können.",
+      status: "Pflicht",
+      optional: "10 Minuten Dehnen",
+      weekTitle: "Jogging locker",
+      weekAmount: "2.0-2.5 km",
+      labels: ["Jogging"]
     },
     2: {
+      category: "Unihockey",
       title: "Unihockey-Training",
-      description: "Der Sportverein ist heute die Hauptbelastung. Krafttraining bleibt draußen.",
-      intensity: "Mittel bis hoch durch Training",
-      duration: "Training plus optional 1.5–2 km sehr locker",
-      tasks: [
-        ["Unihockey", "Training sauber mitmachen"],
-        ["Optional", "Nur sehr lockerer Lauf, wenn Energie und Zeit da sind"]
-      ],
-      hint: "Schule und Regeneration gehen vor."
+      amount: "Vereinstraining",
+      intensity: "Mittel bis hoch",
+      explanation: "Kein Krafttraining. Schule und Regeneration gehen vor.",
+      status: "Pflicht",
+      optional: "1.5-2 km sehr locker, nur wenn genug Energie da ist",
+      weekTitle: "Unihockey",
+      weekAmount: "kein Krafttraining",
+      labels: ["Pause", "Optional"]
     },
     3: {
-      title: "Krafttraining A",
-      description: "Oberkörper und Core stehen im Fokus. Ein kurzer Lauf ist nur optional.",
-      intensity: "Kontrolliert, technisch sauber",
-      duration: "35–45 Minuten plus optional 1.5–2 km locker",
-      tasks: [
-        ["Kraft A", "Oberkörper + Core"],
-        ["Optional", "Kurzer lockerer Lauf nur, wenn du dich fit fühlst"]
-      ],
-      hint: "Qualität schlägt Tempo. Jede Wiederholung sauber."
+      category: "Kraft",
+      title: "Kraft A",
+      amount: "Oberkörper + Core",
+      intensity: "Kontrolliert",
+      explanation: "Saubere Wiederholungen sind wichtiger als Tempo.",
+      status: "Pflicht",
+      optional: "1.5-2 km lockerer Lauf, nur wenn du dich fit fühlst",
+      weekTitle: "Kraft A",
+      weekAmount: "Oberkörper + Core",
+      labels: ["Kraft", "Optional"]
     },
     4: {
-      title: "Jogging locker",
-      description: "Ein ruhiger Lauf mit kurzem Core-Finish.",
-      intensity: "Locker, gleichmäßig",
-      duration: "2.5–3 km plus Plank 2×45 Sekunden",
-      tasks: [
-        ["Lauf", "2.5–3 km locker"],
-        ["Core", "Plank 2×45 Sekunden"]
-      ],
-      hint: "Der Lauf soll sich leicht genug anfühlen, um sauber zu atmen."
+      category: "Jogging",
+      title: "Lockerer Lauf",
+      amount: "2.5-3 km",
+      intensity: "Locker",
+      explanation: "Ruhig laufen, gleichmäßig atmen.",
+      status: "Pflicht",
+      optional: "Plank 2 x 45 Sekunden",
+      weekTitle: "Jogging locker",
+      weekAmount: "2.5-3 km + Core",
+      labels: ["Jogging", "Optional"]
     },
     5: {
-      title: "Pause / Regeneration",
-      description: "Heute wird der Körper frischer gemacht, nicht müder.",
+      category: "Pause",
+      title: "Pause",
+      amount: "Keine Einheit",
       intensity: "Sehr locker",
-      duration: "Optional Stepper 15–20 Minuten",
-      tasks: [
-        ["Pause", "Regeneration ernst nehmen"],
-        ["Optional", "Stepper 15–20 Minuten sehr locker"]
-      ],
-      hint: "Regeneration ist Teil des Plans."
+      explanation: "Heute erholen. Regeneration ist Teil des Plans.",
+      status: "Pflicht",
+      optional: "Stepper 15-20 Minuten sehr locker",
+      weekTitle: "Pause",
+      weekAmount: "Regeneration",
+      labels: ["Pause", "Optional"]
     },
     6: {
-      title: "Langer lockerer Lauf",
-      description: "Der wichtigste Lauf für deine Ausdauerbasis.",
-      intensity: "Locker, nicht Vollgas",
-      duration: "Start 3 km, jede Woche +0.5 km wenn es gut läuft",
-      tasks: [
-        ["Langer Lauf", "Start 3 km"],
-        ["Steigerung", "Nur +0.5 km, wenn es sich gut anfühlt"]
-      ],
-      hint: "Lieber stabil und ruhig als schnell und kaputt."
+      category: "Jogging",
+      title: "Langer Lauf",
+      amount: "3 km",
+      intensity: "Locker",
+      explanation: "Nicht Vollgas. Du sollst sauber durchlaufen.",
+      status: "Pflicht",
+      optional: "+0.5 km pro Woche nur, wenn es sich gut anfühlt",
+      weekTitle: "Langer Lauf",
+      weekAmount: "3 km",
+      labels: ["Jogging"]
     },
     0: {
-      title: "Krafttraining B",
-      description: "Beine und Core. Lockerer Spaziergang oder Stepper ist optional.",
-      intensity: "Kontrolliert, sauber",
-      duration: "35–45 Minuten",
-      tasks: [
-        ["Kraft B", "Beine + Core"],
-        ["Optional", "Spaziergang oder Stepper locker"]
-      ],
-      hint: "Arbeite langsam und stabil. Knie und Rücken bleiben kontrolliert."
+      category: "Kraft",
+      title: "Kraft B",
+      amount: "Beine + Core",
+      intensity: "Kontrolliert",
+      explanation: "Langsam und stabil arbeiten.",
+      status: "Pflicht",
+      optional: "Spaziergang oder Stepper locker",
+      weekTitle: "Kraft B",
+      weekAmount: "Beine + Core",
+      labels: ["Kraft", "Optional"]
     }
   },
   nevio: {
     1: {
-      title: "Jogging locker",
-      description: "Heute steht ein ruhiger Lauf an. Ziel ist ein entspannter Start in die Woche.",
-      intensity: "Locker, reden möglich",
-      duration: "2.0–2.5 km plus optional 10 Minuten Dehnen",
-      tasks: [
-        ["Lauf", "2.0–2.5 km locker"],
-        ["Optional", "10 Minuten Dehnen"]
-      ],
-      hint: "Bleib bewusst langsam. Du sollst danach noch Energie haben."
+      category: "Jogging",
+      title: "Lockerer Lauf",
+      amount: "2.0-2.5 km",
+      intensity: "Locker",
+      explanation: "Du solltest noch reden können.",
+      status: "Pflicht",
+      optional: "10 Minuten Dehnen",
+      weekTitle: "Jogging locker",
+      weekAmount: "2.0-2.5 km",
+      labels: ["Jogging"]
     },
     2: {
+      category: "Pause",
       title: "Locker bewegen",
-      description: "Heute bleibt die Belastung niedrig. Jogging ist nur optional.",
+      amount: "Kein Pflichtlauf",
       intensity: "Sehr locker",
-      duration: "Optional 1.5–2 km",
-      tasks: [
-        ["Optional", "1.5–2 km sehr locker"],
-        ["Regeneration", "Schule, Schlaf und Energie beachten"]
-      ],
-      hint: "Wenn du müde bist, ist Pause die richtige Entscheidung."
+      explanation: "Heute nur bewegen, wenn du dich frisch fühlst.",
+      status: "Optional",
+      optional: "1.5-2 km sehr locker",
+      weekTitle: "Locker bewegen",
+      weekAmount: "optional 1.5-2 km",
+      labels: ["Pause", "Optional"]
     },
     3: {
-      title: "Heute wäre Krafttraining",
-      description: "Für Nevio ist noch kein Kraftplan eingetragen. Schicke deine Daten an Ale.",
-      intensity: "Kein Kraftplan vorhanden",
-      duration: "Heute kein eigener Kraftblock",
-      tasks: [
-        ["Info", "Ziele, Equipment und mögliche Trainingstage an Ale schicken"]
-      ],
-      hint: "Der Joggingplan bleibt gleich, Kraft wird ergänzt, sobald Daten da sind."
+      category: "Kraft",
+      title: "Kraftplan fehlt",
+      amount: "Daten an Ale schicken",
+      intensity: "Kein Krafttraining",
+      explanation: "Heute wäre Krafttraining. Für Nevio ist noch kein Kraftplan eingetragen.",
+      status: "Info",
+      optional: "Ziele, Equipment und Trainingstage notieren",
+      weekTitle: "Kraftplan fehlt",
+      weekAmount: "Daten an Ale schicken",
+      labels: ["Kraft"]
     },
     4: {
-      title: "Jogging locker",
-      description: "Ein ruhiger Lauf mit kurzem Core-Finish, wenn du dich gut fühlst.",
-      intensity: "Locker, gleichmäßig",
-      duration: "2.5–3 km plus optional Plank 2×45 Sekunden",
-      tasks: [
-        ["Lauf", "2.5–3 km locker"],
-        ["Optional", "Plank 2×45 Sekunden"]
-      ],
-      hint: "Der Lauf soll sich leicht genug anfühlen, um sauber zu atmen."
+      category: "Jogging",
+      title: "Lockerer Lauf",
+      amount: "2.5-3 km",
+      intensity: "Locker",
+      explanation: "Ruhig laufen, gleichmäßig atmen.",
+      status: "Pflicht",
+      optional: "Plank 2 x 45 Sekunden, nur wenn du willst",
+      weekTitle: "Jogging locker",
+      weekAmount: "2.5-3 km + optional Core",
+      labels: ["Jogging", "Optional"]
     },
     5: {
-      title: "Pause / Regeneration",
-      description: "Heute wird der Körper frischer gemacht, nicht müder.",
+      category: "Pause",
+      title: "Pause",
+      amount: "Keine Einheit",
       intensity: "Sehr locker",
-      duration: "Optional 15–20 Minuten locker bewegen",
-      tasks: [
-        ["Pause", "Regeneration ernst nehmen"],
-        ["Optional", "Sehr locker bewegen"]
-      ],
-      hint: "Regeneration ist Teil des Plans."
+      explanation: "Heute erholen. Regeneration ist Teil des Plans.",
+      status: "Pflicht",
+      optional: "15-20 Minuten sehr locker bewegen",
+      weekTitle: "Pause",
+      weekAmount: "Regeneration",
+      labels: ["Pause", "Optional"]
     },
     6: {
-      title: "Langer lockerer Lauf",
-      description: "Der wichtigste Lauf für deine Ausdauerbasis.",
-      intensity: "Locker, nicht Vollgas",
-      duration: "Start 3 km, jede Woche +0.5 km wenn es gut läuft",
-      tasks: [
-        ["Langer Lauf", "Start 3 km"],
-        ["Steigerung", "Nur +0.5 km, wenn es sich gut anfühlt"]
-      ],
-      hint: "Lieber stabil und ruhig als schnell und kaputt."
+      category: "Jogging",
+      title: "Langer Lauf",
+      amount: "3 km",
+      intensity: "Locker",
+      explanation: "Nicht Vollgas. Du sollst sauber durchlaufen.",
+      status: "Pflicht",
+      optional: "+0.5 km pro Woche nur, wenn es sich gut anfühlt",
+      weekTitle: "Langer Lauf",
+      weekAmount: "3 km",
+      labels: ["Jogging"]
     },
     0: {
-      title: "Heute wäre Krafttraining",
-      description: "Für Nevio ist noch kein Kraftplan eingetragen. Schicke deine Daten an Ale.",
-      intensity: "Kein Kraftplan vorhanden",
-      duration: "Heute kein eigener Kraftblock",
-      tasks: [
-        ["Info", "Ziele, Equipment und mögliche Trainingstage an Ale schicken"]
-      ],
-      hint: "Der Joggingplan bleibt gleich, Kraft wird ergänzt, sobald Daten da sind."
+      category: "Kraft",
+      title: "Kraftplan fehlt",
+      amount: "Daten an Ale schicken",
+      intensity: "Kein Krafttraining",
+      explanation: "Heute wäre Krafttraining. Für Nevio ist noch kein Kraftplan eingetragen.",
+      status: "Info",
+      optional: "Ziele, Equipment und Trainingstage notieren",
+      weekTitle: "Kraftplan fehlt",
+      weekAmount: "Daten an Ale schicken",
+      labels: ["Kraft"]
     }
   }
 };
 
-const strengthPlans = [
+const joggingCards = [
   {
-    id: "strength-a",
-    title: "Krafttraining A",
-    subtitle: "Oberkörper + Core",
-    exercises: [
-      ["pushups", "Liegestütze", "3 Sätze, so viele sauber gehen", "Körper gerade halten, nicht ins Hohlkreuz fallen."],
-      ["row", "Rudern mit 10-kg-Kurzhantel", "3×10–12 pro Seite", "Rücken gerade, Ellbogen eng am Körper ziehen."],
-      ["press", "Schulterdrücken mit 3-kg-Hanteln", "3×12–15", "Kontrolliert drücken, Schultern nicht hochziehen."],
-      ["curls", "Bizeps-Curls mit 3-kg-Hanteln", "3×15–20", "Ellbogen ruhig halten, nicht schwingen."],
-      ["plank", "Plank", "3×45–60 Sekunden", "Bauch anspannen, Rücken gerade."]
+    title: "Lockerer Lauf",
+    rows: [
+      ["Ziel", "Grundausdauer"],
+      ["Tempo", "reden können"],
+      ["Distanz", "2-3 km"]
     ]
   },
   {
-    id: "strength-b",
-    title: "Krafttraining B",
-    subtitle: "Beine + Core",
-    exercises: [
-      ["squats", "Kniebeugen", "4×15–25", "Knie stabil, Rücken gerade, tief aber kontrolliert."],
-      ["lunges", "Ausfallschritte", "3×10 pro Bein", "Langsam und kontrolliert, Knie nicht nach innen kippen."],
-      ["calves", "Wadenheben", "3×20", "Oben kurz halten, langsam senken."],
-      ["legraises", "Beinheben", "3×12–15", "Bauch anspannen, nicht mit Schwung arbeiten."],
-      ["sideplank", "Seitstütz", "2×30–45 Sekunden pro Seite", "Hüfte oben halten, Körper gerade."]
+    title: "Intervalllauf",
+    rows: [
+      ["Ziel", "schneller werden"],
+      ["Beispiel", "1 km einlaufen"],
+      ["Danach", "3 x 300 m schnell"],
+      ["Pause", "dazwischen gehen"],
+      ["Ende", "auslaufen"],
+      ["Maximal", "1 x pro Woche"]
+    ]
+  },
+  {
+    title: "Langer Lauf",
+    rows: [
+      ["Ziel", "Ausdauer"],
+      ["Start", "3 km"],
+      ["Steigerung", "+0.5 km pro Woche"]
     ]
   }
 ];
 
-const nutritionCards = [
-  ["Protein", "Ziel ca. 1.6–2.0 g pro kg Körpergewicht pro Tag."],
-  ["Kreatin", "3–5 g täglich reichen meistens; bei 6 g genug trinken."],
-  ["Schlaf", "8–9 Stunden wären ideal, besonders an Trainingstagen."],
-  ["Essen", "Muskelaufbau braucht genug Energie, nicht stark ins Defizit gehen."]
-];
+const strengthPlans = {
+  a: {
+    id: "a",
+    title: "Kraft A",
+    subtitle: "Oberkörper + Core",
+    exercises: [
+      ["pushups", "Liegestütze", "3 x max sauber", "Körper gerade halten, nicht ins Hohlkreuz fallen."],
+      ["row", "Rudern mit 10 kg", "3 x 10-12 pro Seite", "Rücken gerade, Ellbogen eng am Körper ziehen."],
+      ["press", "Schulterdrücken mit 3 kg", "3 x 12-15", "Kontrolliert drücken, Schultern nicht hochziehen."],
+      ["curls", "Bizeps-Curls mit 3 kg", "3 x 15-20", "Ellbogen ruhig halten, nicht schwingen."],
+      ["plank", "Plank", "3 x 45-60 Sekunden", "Bauch anspannen, Rücken gerade."]
+    ]
+  },
+  b: {
+    id: "b",
+    title: "Kraft B",
+    subtitle: "Beine + Core",
+    exercises: [
+      ["squats", "Kniebeugen", "4 x 15-25", "Knie stabil, Rücken gerade, tief aber kontrolliert."],
+      ["lunges", "Ausfallschritte", "3 x 10 pro Bein", "Langsam und kontrolliert, Knie nicht nach innen kippen."],
+      ["calves", "Wadenheben", "3 x 20", "Oben kurz halten, langsam senken."],
+      ["legraises", "Beinheben", "3 x 12-15", "Bauch anspannen, nicht mit Schwung arbeiten."],
+      ["sideplank", "Seitstütz", "2 x 30-45 Sekunden pro Seite", "Hüfte oben halten, Körper gerade."]
+    ]
+  }
+};
 
 let currentProfile = null;
 let activeTab = "today";
+let selectedStrengthPlan = null;
 let state = loadState();
 
 const loginView = document.querySelector("#loginView");
@@ -234,21 +254,17 @@ const mainView = document.querySelector("#mainView");
 const loginForm = document.querySelector("#loginForm");
 const usernameInput = document.querySelector("#usernameInput");
 const loginMessage = document.querySelector("#loginMessage");
-const todayLine = document.querySelector("#todayLine");
-const profileLine = document.querySelector("#profileLine");
 const todayContent = document.querySelector("#todayContent");
-const joggingCards = document.querySelector("#joggingCards");
-const progressionRows = document.querySelector("#progressionRows");
+const weekContent = document.querySelector("#weekContent");
+const joggingContent = document.querySelector("#joggingContent");
 const strengthContent = document.querySelector("#strengthContent");
 const progressContent = document.querySelector("#progressContent");
-const switchProfileButton = document.querySelector("#switchProfileButton");
 
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
   bindLogin();
   bindTabs();
-  renderStaticJogging();
   registerServiceWorker();
 
   const storedProfile = normalizeProfile(localStorage.getItem(storageKeys.profile) || "");
@@ -274,9 +290,11 @@ function bindLogin() {
     openProfile(profile);
   });
 
-  switchProfileButton.addEventListener("click", () => {
+  mainView.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-switch-profile]")) return;
     localStorage.removeItem(storageKeys.profile);
     currentProfile = null;
+    selectedStrengthPlan = null;
     showLogin();
   });
 }
@@ -296,14 +314,13 @@ function normalizeProfile(value) {
 
 function openProfile(profile) {
   currentProfile = profile;
+  selectedStrengthPlan = null;
   localStorage.setItem(storageKeys.profile, profile);
   usernameInput.value = "";
   loginMessage.textContent = "";
   loginView.classList.add("is-hidden");
   mainView.classList.remove("is-hidden");
-  activeTab = "today";
   setTab("today");
-  renderAll();
 }
 
 function showLogin() {
@@ -320,56 +337,69 @@ function setTab(tab) {
   document.querySelectorAll("[data-tab]").forEach((button) => {
     button.classList.toggle("is-active", button.dataset.tab === tab);
   });
-  if (currentProfile) renderAll();
+  renderAll();
 }
 
 function renderAll() {
   if (!currentProfile) return;
-  const today = new Date();
-  todayLine.textContent = `Heute: ${weekdays[today.getDay()]}`;
-  profileLine.textContent = `Profil: ${profiles[currentProfile].label}`;
   renderToday();
+  renderWeek();
+  renderJogging();
   renderStrength();
   renderProgress();
 }
 
 function renderToday() {
   const dayIndex = new Date().getDay();
-  const plan = dailyPlans[currentProfile][dayIndex];
+  const plan = planByProfile[currentProfile][dayIndex];
   const done = isDayDone(currentProfile, dayIndex);
-  const doneText = done ? "Erledigt" : "Erledigt markieren";
 
   todayContent.innerHTML = `
-    <article class="glass-card">
-      <div class="card-header">
-        <div>
-          <p class="card-kicker">${escapeHtml(weekdays[dayIndex])}</p>
-          <h2>${escapeHtml(plan.title)}</h2>
+    <div class="page-heading today-heading">
+      <div class="page-topline">
+        <h1>Heute</h1>
+        <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
+      </div>
+      <p>${escapeHtml(weekdays[dayIndex])}</p>
+      <p>Profil: ${escapeHtml(profiles[currentProfile].label)}</p>
+    </div>
+
+    <article class="today-main-card">
+      <div class="main-card-top">
+        <p class="card-kicker">Dein Training heute</p>
+        <span class="status-badge ${done ? "is-done" : ""}">${done ? "erledigt" : escapeHtml(plan.status)}</span>
+      </div>
+
+      <h2>${escapeHtml(plan.title)}</h2>
+
+      <div class="today-facts">
+        <div class="fact-row">
+          <span>Training</span>
+          <strong>${escapeHtml(plan.category)}</strong>
         </div>
-        <span class="status-badge ${done ? "is-done" : ""}">${done ? "erledigt" : "offen"}</span>
+        <div class="fact-row">
+          <span>Wie viel</span>
+          <strong>${escapeHtml(plan.amount)}</strong>
+        </div>
+        <div class="fact-row">
+          <span>Intensität</span>
+          <strong>${escapeHtml(plan.intensity)}</strong>
+        </div>
       </div>
-      <p>${escapeHtml(plan.description)}</p>
-      <div class="meta-row">
-        <span class="meta-pill">Intensität: ${escapeHtml(plan.intensity)}</span>
-        <span class="meta-pill">Dauer: ${escapeHtml(plan.duration)}</span>
-      </div>
-      <ul class="task-list">
-        ${plan.tasks.map(([title, text]) => `
-          <li class="task-item">
-            <strong>${escapeHtml(title)}</strong>
-            <span>${escapeHtml(text)}</span>
-          </li>
-        `).join("")}
-      </ul>
+
+      <p class="today-explanation">${escapeHtml(plan.explanation)}</p>
+
       <button class="done-button ${done ? "is-done" : ""}" type="button" data-day-toggle="${dayIndex}">
-        ${doneText}
+        ${done ? "Erledigt" : "Erledigt"}
       </button>
     </article>
-    <article class="notice-card">
-      <strong>Achte heute darauf</strong>
-      <span>${escapeHtml(plan.hint)}</span>
-    </article>
-    ${renderNutritionCards()}
+
+    ${plan.optional ? `
+      <article class="optional-card">
+        <p class="card-kicker">Optional</p>
+        <h3>${escapeHtml(plan.optional)}</h3>
+      </article>
+    ` : ""}
   `;
 
   todayContent.querySelector("[data-day-toggle]").addEventListener("click", () => {
@@ -378,53 +408,112 @@ function renderToday() {
   });
 }
 
-function renderStaticJogging() {
-  joggingCards.innerHTML = joggingTypes.map((type) => `
-    <article class="glass-card">
-      <div class="card-header">
-        <div>
-          <p class="card-kicker">${escapeHtml(type.kicker)}</p>
-          <h3>${escapeHtml(type.title)}</h3>
-        </div>
+function renderWeek() {
+  const todayIndex = new Date().getDay();
+
+  weekContent.innerHTML = `
+    <div class="page-heading">
+      <div class="page-topline">
+        <h1>Woche</h1>
+        <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
       </div>
-      <ul class="simple-list">
-        ${type.details.map((detail) => `<li class="task-item"><span>${escapeHtml(detail)}</span></li>`).join("")}
-      </ul>
-      <div class="meta-row">
-        <span class="meta-pill">${escapeHtml(type.note)}</span>
+      <p>Dein Plan von Montag bis Sonntag.</p>
+    </div>
+    <div class="week-list">
+      ${weekIndexes.map((dayIndex) => {
+        const plan = planByProfile[currentProfile][dayIndex];
+        const isToday = dayIndex === todayIndex;
+        return `
+          <article class="week-card ${isToday ? "is-today" : ""}">
+            <div class="week-card-head">
+              <div>
+                <span class="day-label">${escapeHtml(weekdays[dayIndex])}</span>
+                <h2>${escapeHtml(plan.weekTitle)}</h2>
+              </div>
+              ${isToday ? `<span class="today-chip">Heute</span>` : ""}
+            </div>
+            <p class="week-amount">${escapeHtml(plan.weekAmount)}</p>
+            <div class="label-row">
+              ${plan.labels.map((label) => `<span class="plan-label ${labelClass(label)}">${escapeHtml(label)}</span>`).join("")}
+            </div>
+          </article>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderJogging() {
+  joggingContent.innerHTML = `
+    <div class="page-heading">
+      <div class="page-topline">
+        <h1>Jogging</h1>
+        <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
+      </div>
+      <p class="rule-line">80 % locker, 20 % schnell.</p>
+    </div>
+    <div class="card-grid">
+      ${joggingCards.map((card) => `
+        <article class="info-card">
+          <h2>${escapeHtml(card.title)}</h2>
+          <div class="info-rows">
+            ${card.rows.map(([label, value]) => `
+              <div class="info-row">
+                <span>${escapeHtml(label)}</span>
+                <strong>${escapeHtml(value)}</strong>
+              </div>
+            `).join("")}
+          </div>
+        </article>
+      `).join("")}
+    </div>
+    <article class="info-card">
+      <h2>Steigerung</h2>
+      <div class="table-wrap">
+        <table class="progression-table">
+          <thead>
+            <tr>
+              <th>Woche</th>
+              <th>Langer Lauf</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${[3, 3.5, 4, 4.5, 5].map((distance, index) => `
+              <tr>
+                <td>Woche ${index + 1}</td>
+                <td>${distance.toFixed(1)} km</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
       </div>
     </article>
-  `).join("");
-
-  progressionRows.innerHTML = [3, 3.5, 4, 4.5, 5].map((distance, index) => `
-    <tr>
-      <td>Woche ${index + 1}</td>
-      <td>${distance.toFixed(1)} km</td>
-    </tr>
-  `).join("");
+  `;
 }
 
 function renderStrength() {
   if (!profiles[currentProfile].hasStrength) {
     strengthContent.innerHTML = `
-      <article class="glass-card">
-        <p class="card-kicker">Kraft</p>
+      <div class="page-heading">
+        <div class="page-topline">
+          <h1>Kraft</h1>
+          <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
+        </div>
+        <p>Profil: Nevio</p>
+      </div>
+      <article class="info-card">
         <h2>Noch kein Kraftplan vorhanden</h2>
-        <p>Nevio hat noch keinen eigenen Krafttrainingsplan. Schicke deine Ziele, verfügbares Equipment und mögliche Trainingstage an Ale, damit der Plan ergänzt werden kann.</p>
-        <button class="copy-button" type="button" id="showNevioInfo">Infos für Ale anzeigen</button>
+        <p>Nevio hat noch keinen eigenen Krafttrainingsplan. Schicke Ale deine Ziele, dein Equipment und deine möglichen Trainingstage.</p>
+        <button class="primary-button wide-button" type="button" id="showNevioInfo">Text für Ale anzeigen</button>
         <div class="copy-area" id="nevioCopyArea">
           <textarea class="copy-text" id="nevioCopyText" readonly>Hey Ale, kannst du mir meinen Kraftplan einbauen?
 Ziele:
 Equipment:
 Mögliche Trainingstage:
 Besonderheiten:</textarea>
-          <button class="ghost-button" type="button" id="copyNevioText">Text kopieren</button>
+          <button class="ghost-button wide-button" type="button" id="copyNevioText">Text kopieren</button>
           <p class="form-message" id="copyMessage"></p>
         </div>
-      </article>
-      <article class="notice-card">
-        <strong>An Ale schicken</strong>
-        <span>Schicke Ale deine Ziele, verfügbares Equipment und Trainingstage. Danach kann der Kraftplan ergänzt werden.</span>
       </article>
     `;
     bindNevioStrengthCard();
@@ -432,52 +521,66 @@ Besonderheiten:</textarea>
   }
 
   strengthContent.innerHTML = `
-    <article class="notice-card">
-      <strong>Qualität vor Gewicht.</strong>
-      <span>Saubere Wiederholungen sind wichtiger als schnell fertig werden.</span>
-    </article>
-    <div class="workout-stack">
-      ${strengthPlans.map(renderWorkoutCard).join("")}
+    <div class="page-heading">
+      <div class="page-topline">
+        <h1>Krafttraining Ale</h1>
+        <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
+      </div>
+      <p>Wähle A oder B.</p>
     </div>
+
+    <div class="strength-choice-grid">
+      ${Object.values(strengthPlans).map((plan) => `
+        <button class="strength-choice ${selectedStrengthPlan === plan.id ? "is-selected" : ""}" type="button" data-strength-select="${plan.id}">
+          <span>${escapeHtml(plan.title)}</span>
+          <strong>${escapeHtml(plan.subtitle)}</strong>
+        </button>
+      `).join("")}
+    </div>
+
+    ${selectedStrengthPlan ? renderExerciseList(strengthPlans[selectedStrengthPlan]) : `
+      <article class="optional-card">
+        <p class="card-kicker">Checkliste</p>
+        <h3>Tippe auf Kraft A oder Kraft B.</h3>
+      </article>
+    `}
   `;
+
+  strengthContent.querySelectorAll("[data-strength-select]").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedStrengthPlan = button.dataset.strengthSelect;
+      renderStrength();
+    });
+  });
 
   strengthContent.querySelectorAll("[data-exercise-check]").forEach((button) => {
     button.addEventListener("click", () => {
       toggleExercise(currentProfile, button.dataset.exerciseCheck);
       renderStrength();
-      renderProgress();
     });
   });
 }
 
-function renderWorkoutCard(workout) {
+function renderExerciseList(plan) {
   return `
-    <article class="glass-card">
-      <div class="card-header">
-        <div>
-          <p class="card-kicker">${escapeHtml(workout.subtitle)}</p>
-          <h2>${escapeHtml(workout.title)}</h2>
-        </div>
-      </div>
-      <ul class="exercise-list">
-        ${workout.exercises.map(([id, name, prescription, note]) => {
-          const checkId = `${workout.id}:${id}`;
-          const checked = isExerciseDone(currentProfile, checkId);
-          return `
-            <li class="exercise-item">
-              <button class="check-row ${checked ? "is-checked" : ""}" type="button" data-exercise-check="${escapeAttr(checkId)}" aria-pressed="${checked}">
-                <span class="custom-check" aria-hidden="true">✓</span>
-                <span class="exercise-main">
-                  <span class="exercise-title">${escapeHtml(name)}</span>
-                  <span class="exercise-prescription">${escapeHtml(prescription)}</span>
-                  <span class="exercise-note">${escapeHtml(note)}</span>
-                </span>
-              </button>
-            </li>
-          `;
-        }).join("")}
-      </ul>
-    </article>
+    <div class="exercise-stack">
+      ${plan.exercises.map(([id, name, prescription, note]) => {
+        const checkId = `${plan.id}:${id}`;
+        const done = isExerciseDone(currentProfile, checkId);
+        return `
+          <article class="exercise-card ${done ? "is-done" : ""}">
+            <div>
+              <h2>${escapeHtml(name)}</h2>
+              <strong>${escapeHtml(prescription)}</strong>
+              <p>${escapeHtml(note)}</p>
+            </div>
+            <button class="exercise-check" type="button" data-exercise-check="${escapeAttr(checkId)}" aria-pressed="${done}">
+              ${done ? "Erledigt" : "Offen"}
+            </button>
+          </article>
+        `;
+      }).join("")}
+    </div>
   `;
 }
 
@@ -490,7 +593,6 @@ function bindNevioStrengthCard() {
 
   showButton.addEventListener("click", () => {
     copyArea.classList.add("is-visible");
-    copyMessage.textContent = "Schicke Ale deine Ziele, verfügbares Equipment und Trainingstage. Danach kann der Kraftplan ergänzt werden.";
   });
 
   copyButton.addEventListener("click", async () => {
@@ -505,43 +607,36 @@ function bindNevioStrengthCard() {
 }
 
 function renderProgress() {
-  const doneDays = weekDayIndexes().filter((dayIndex) => isDayDone(currentProfile, dayIndex));
+  const doneDays = weekIndexes.filter((dayIndex) => isDayDone(currentProfile, dayIndex));
   const count = doneDays.length;
   const percent = Math.min(100, Math.round((count / 5) * 100));
-  const motivation = count <= 2
-    ? "Ruhig starten. Hauptsache dranbleiben."
-    : count <= 4
-      ? "Sehr gut. Du baust Routine auf."
-      : "Stark. Achte trotzdem auf genug Erholung.";
 
   progressContent.innerHTML = `
-    <article class="glass-card progress-ring-card">
-      <div class="ring" style="--value: ${percent}">
-        <span>${count}/5</span>
+    <div class="page-heading">
+      <div class="page-topline">
+        <h1>Fortschritt</h1>
+        <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
       </div>
-      <div>
-        <p class="card-kicker">Diese Woche</p>
-        <h2>${count} erledigte Einheiten</h2>
-        <p>${escapeHtml(motivation)}</p>
-        <div class="progress-bar" aria-label="Fortschritt ${percent} Prozent">
-          <span style="width: ${percent}%"></span>
-        </div>
+      <p>Profil: ${escapeHtml(profiles[currentProfile].label)}</p>
+    </div>
+    <article class="progress-card">
+      <div class="progress-topline">
+        <span>Diese Woche erledigt</span>
+        <strong>${count} / 5</strong>
+      </div>
+      <div class="progress-bar" aria-label="Fortschritt ${percent} Prozent">
+        <span style="width: ${percent}%"></span>
       </div>
     </article>
-    <article class="glass-card">
-      <div class="card-header">
-        <div>
-          <p class="card-kicker">Wochentage</p>
-          <h3>Status</h3>
-        </div>
-      </div>
-      <div class="progress-stack">
-        ${weekDayIndexes().map((dayIndex) => {
+    <article class="info-card">
+      <h2>Wochentage</h2>
+      <div class="day-pill-grid">
+        ${weekIndexes.map((dayIndex) => {
           const done = isDayDone(currentProfile, dayIndex);
           return `
-            <div class="day-status">
-              <span class="day-name">${escapeHtml(weekdays[dayIndex])}</span>
-              <span class="status-badge ${done ? "is-done" : ""}">${done ? "erledigt" : "offen"}</span>
+            <div class="day-pill ${done ? "is-done" : ""}">
+              <strong>${escapeHtml(weekdayShort[dayIndex])}</strong>
+              <span>${done ? "erledigt" : "offen"}</span>
             </div>
           `;
         }).join("")}
@@ -556,34 +651,11 @@ function renderProgress() {
   });
 }
 
-function renderNutritionCards() {
-  return `
-    <article class="glass-card">
-      <div class="card-header">
-        <div>
-          <p class="card-kicker">Hinweise</p>
-          <h3>Regeneration & Ernährung</h3>
-        </div>
-      </div>
-      <div class="nutrition-grid">
-        ${nutritionCards.map(([title, text]) => `
-          <div class="info-tile">
-            <strong>${escapeHtml(title)}</strong>
-            <span>${escapeHtml(text)}</span>
-          </div>
-        `).join("")}
-      </div>
-    </article>
-    <article class="notice-card">
-      <strong>Sicherheit</strong>
-      <span>Bei Schmerzen, Krankheit oder Unsicherheit pausieren und mit Eltern, Trainer oder Arzt abklären.</span>
-    </article>
-  `;
-}
-
 function loadState() {
   try {
-    return JSON.parse(localStorage.getItem(storageKeys.state)) || {};
+    const freshState = JSON.parse(localStorage.getItem(storageKeys.state));
+    if (freshState) return freshState;
+    return JSON.parse(localStorage.getItem("trainingsplan.state.v1")) || {};
   } catch {
     return {};
   }
@@ -627,10 +699,6 @@ function resetWeek(profile) {
   saveState();
 }
 
-function weekDayIndexes() {
-  return [1, 2, 3, 4, 5, 6, 0];
-}
-
 function getWeekKey(date) {
   const target = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   const dayNumber = target.getUTCDay() || 7;
@@ -638,6 +706,10 @@ function getWeekKey(date) {
   const yearStart = new Date(Date.UTC(target.getUTCFullYear(), 0, 1));
   const weekNumber = Math.ceil((((target - yearStart) / 86400000) + 1) / 7);
   return `${target.getUTCFullYear()}-W${String(weekNumber).padStart(2, "0")}`;
+}
+
+function labelClass(label) {
+  return `is-${label.toLowerCase().replaceAll("ä", "ae").replaceAll(" ", "-")}`;
 }
 
 function escapeHtml(value) {
