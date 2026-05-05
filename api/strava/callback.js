@@ -52,10 +52,19 @@ module.exports = async function handler(req, res) {
     };
 
     setSessionCookie(res, req, profile, session, config);
+    console.info("Strava callback connected", {
+      profile,
+      athleteId: session.athlete?.id || null
+    });
     res.statusCode = 302;
     res.setHeader("Location", appendParams(state.returnTo, { strava: "connected", profile }));
     res.end();
   } catch (error) {
+    console.warn("Strava callback failed", {
+      profile,
+      statusCode: error.statusCode || 500,
+      message: error.message || "Server error"
+    });
     if (returnTo && profile) {
       redirectWithError(res, returnTo, profile, "Strava-Verbindung fehlgeschlagen. Bitte Client ID, Client Secret und Callback Domain prüfen.");
       return;

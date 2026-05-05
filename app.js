@@ -2,7 +2,7 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 4";
+const APP_VERSION = "Version 5";
 const STRAVA_API_BASE = "/api/strava";
 
 const profiles = {
@@ -249,7 +249,7 @@ const strengthPlans = {
 let currentProfile = null;
 let activeTab = "today";
 let selectedStrengthPlan = null;
-let pendingStravaSyncProfile = null;
+let pendingStravaReturn = null;
 let state = loadState();
 
 const loginView = document.querySelector("#loginView");
@@ -266,12 +266,12 @@ const progressContent = document.querySelector("#progressContent");
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
-  pendingStravaSyncProfile = readStravaReturnProfile();
+  pendingStravaReturn = readStravaReturn();
   bindLogin();
   bindTabs();
   registerServiceWorker();
 
-  const storedProfile = pendingStravaSyncProfile || normalizeProfile(localStorage.getItem(storageKeys.profile) || "");
+  const storedProfile = pendingStravaReturn?.profile || normalizeProfile(localStorage.getItem(storageKeys.profile) || "");
   if (storedProfile) {
     openProfile(storedProfile);
   } else {
@@ -317,6 +317,7 @@ function normalizeProfile(value) {
 }
 
 function openProfile(profile) {
+  const stravaReturn = pendingStravaReturn?.profile === profile ? pendingStravaReturn : null;
   currentProfile = profile;
   selectedStrengthPlan = null;
   localStorage.setItem(storageKeys.profile, profile);
@@ -324,11 +325,13 @@ function openProfile(profile) {
   loginMessage.textContent = "";
   loginView.classList.add("is-hidden");
   mainView.classList.remove("is-hidden");
-  setTab("today");
+  setTab(stravaReturn ? "progress" : "today");
 
-  if (pendingStravaSyncProfile === profile) {
-    pendingStravaSyncProfile = null;
-    syncStravaActivities({ silent: true });
+  if (stravaReturn) {
+    pendingStravaReturn = null;
+    if (stravaReturn.status === "connected") {
+      syncStravaActivities();
+    }
   }
 }
 
@@ -737,12 +740,14 @@ function getStravaMatch(profile, dayIndex) {
   return getProfileWeek(profile).stravaMatches?.[dayIndex] || null;
 }
 
-function readStravaReturnProfile() {
+function readStravaReturn() {
   const params = new URLSearchParams(window.location.search);
   const stravaStatus = params.get("strava");
   if (!stravaStatus) return null;
 
   const profile = normalizeProfile(params.get("profile"));
+  if (!profile) return null;
+
   if (profile && stravaStatus === "error") {
     const message = params.get("message") || "Strava-Verbindung fehlgeschlagen. Bitte erneut versuchen.";
     localStorage.setItem(storageKeys.profile, profile);
@@ -756,7 +761,7 @@ function readStravaReturnProfile() {
 
   const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
   window.history.replaceState({}, document.title, cleanUrl);
-  return stravaStatus === "connected" ? profile : null;
+  return { profile, status: stravaStatus };
 }
 
 function connectStrava() {
@@ -788,7 +793,11 @@ async function syncStravaActivities(options = {}) {
     });
 
     if (response.status === 401) {
-      setStravaConnection(profile, { connected: false, error: "Strava ist noch nicht verbunden.", message: "" });
+      setStravaConnection(profile, {
+        connected: false,
+        error: "Strava ist noch nicht verbunden. Bitte einmal neu verbinden und danach Läufe synchronisieren.",
+        message: ""
+      });
       renderAll();
       return;
     }
@@ -978,7 +987,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=4").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=5").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 

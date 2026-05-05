@@ -27,6 +27,10 @@ module.exports = async function handler(req, res) {
 
     let session = readSession(req, profile, config);
     if (!session || session.profile !== profile) {
+      console.info("Strava activities missing session", {
+        profile,
+        hasCookieHeader: Boolean(req.headers.cookie)
+      });
       sendJson(res, 401, { connected: false, error: "Strava not connected" });
       return;
     }
@@ -36,6 +40,12 @@ module.exports = async function handler(req, res) {
 
     const activities = await fetchActivities(session);
     const runs = activities.filter((activity) => activity.isRun);
+    console.info("Strava activities synced", {
+      profile,
+      athleteId: session.athlete?.id || null,
+      activities: activities.length,
+      runs: runs.length
+    });
     sendJson(res, 200, {
       connected: true,
       athlete: session.athlete,
