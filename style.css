@@ -728,6 +728,47 @@ input::placeholder {
   margin-top: 2px;
 }
 
+.app-version {
+  margin: 12px 4px 0;
+  color: var(--faint);
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.update-notice {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabbar-height) + max(22px, env(safe-area-inset-bottom)));
+  z-index: 80;
+  width: min(calc(100% - 24px), 496px);
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(18, 27, 41, 0.96);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+}
+
+.update-notice span {
+  color: var(--text);
+  font-size: 0.98rem;
+  font-weight: 850;
+  line-height: 1.28;
+}
+
+.update-notice button {
+  min-height: 46px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--green), var(--cyan));
+  color: #061018;
+  font-weight: 900;
+}
+
 .bottom-tabs {
   position: fixed;
   left: 50%;

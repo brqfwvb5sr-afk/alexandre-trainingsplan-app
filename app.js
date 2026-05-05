@@ -2,6 +2,7 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
+const APP_VERSION = "Version 3";
 
 const profiles = {
   ale: { label: "Ale", hasStrength: true },
@@ -643,6 +644,7 @@ function renderProgress() {
       </div>
     </article>
     <button class="reset-button" type="button" id="resetWeekButton">Woche zurücksetzen</button>
+    <p class="app-version">${APP_VERSION}</p>
   `;
 
   document.querySelector("#resetWeekButton").addEventListener("click", () => {
@@ -727,8 +729,60 @@ function escapeAttr(value) {
 
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
+    let updateRegistration = null;
+    let isReloadingForUpdate = false;
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (isReloadingForUpdate) return;
+      isReloadingForUpdate = true;
+      window.location.reload();
+    });
+
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js").catch(() => {});
+      navigator.serviceWorker.register("service-worker.js?v=3").then((registration) => {
+        updateRegistration = registration;
+        registration.update().catch(() => {});
+
+        if (registration.waiting && navigator.serviceWorker.controller) {
+          showUpdateNotice(registration);
+        }
+
+        registration.addEventListener("updatefound", () => {
+          const newWorker = registration.installing;
+          if (!newWorker) return;
+
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+              showUpdateNotice(registration);
+            }
+          });
+        });
+      }).catch(() => {});
+    });
+
+    window.addEventListener("online", () => {
+      updateRegistration?.update().catch(() => {});
     });
   }
+}
+
+function showUpdateNotice(registration) {
+  if (document.querySelector("#updateNotice")) return;
+
+  const notice = document.createElement("div");
+  notice.className = "update-notice";
+  notice.id = "updateNotice";
+  notice.innerHTML = `
+    <span>Neue Version verfügbar – App neu laden</span>
+    <button type="button" id="reloadUpdateButton">Jetzt neu laden</button>
+  `;
+  document.body.appendChild(notice);
+
+  notice.querySelector("#reloadUpdateButton").addEventListener("click", () => {
+    if (registration.waiting) {
+      registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      return;
+    }
+    window.location.reload();
+  });
 }
