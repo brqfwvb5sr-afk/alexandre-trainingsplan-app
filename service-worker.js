@@ -1,9 +1,9 @@
-const CACHE_NAME = "trainingsplan-v3";
+const CACHE_NAME = "trainingsplan-v4";
 const APP_SHELL = [
   "./index.html",
-  "./style.css?v=3",
-  "./app.js?v=3",
-  "./manifest.json?v=3"
+  "./style.css?v=4",
+  "./app.js?v=4",
+  "./manifest.json?v=4"
 ];
 
 self.addEventListener("install", (event) => {
@@ -34,6 +34,7 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith("/api/")) return;
 
   if (shouldUseNetworkFirst(event.request, url)) {
     event.respondWith(networkFirst(event.request));

@@ -11,7 +11,8 @@ Moderne iPhone-optimierte Web-App für Ale und Nevio. Die App hilft Schülern, J
 - Hinweis- und Kontaktkarte für Nevio, solange noch kein eigener Kraftplan existiert
 - Fortschritt pro Profil getrennt gespeichert
 - Wochenübersicht, Fortschrittsbalken, Motivationstext und Reset-Funktion
-- Offlinefähig durch Service Worker
+- Optionale Strava-Integration für automatisch erkannte Jogging-Einheiten
+- Service Worker mit Network-First-Strategie für aktuelle App-Dateien
 - PWA-Unterstützung mit `manifest.json`
 - iPhone-freundliches Liquid-Glass-Design mit Safe-Area-Unterstützung
 
@@ -32,12 +33,12 @@ Nevio nutzt vorerst den gleichen Joggingplan wie Ale und bekommt eine eigene For
 
 ## Lokal starten
 
-Die App besteht nur aus HTML, CSS und JavaScript.
+Das Frontend besteht aus HTML, CSS und JavaScript. Für Strava braucht die App zusätzlich die Serverless API unter `api/strava`.
 
 1. Ordner öffnen.
-2. `index.html` im Browser starten.
+2. Für reines Frontend `index.html` im Browser starten.
 
-Für vollständige PWA- und Offline-Tests empfiehlt sich ein lokaler Server:
+Für lokale Frontend-Tests empfiehlt sich ein statischer Server:
 
 ```bash
 python -m http.server 8080
@@ -49,6 +50,36 @@ Danach im Browser öffnen:
 http://localhost:8080
 ```
 
+Für Strava lokal oder produktiv sollte Vercel verwendet werden:
+
+```bash
+npm install -g vercel
+vercel dev
+```
+
+## Strava-Integration
+
+GitHub Pages kann kein sicheres Backend ausführen. Der Strava Client Secret darf nicht im Browser stehen, deshalb funktionieren die Routen `/api/strava/login`, `/api/strava/callback` und `/api/strava/activities` nur auf einem Backend-Deployment, z. B. Vercel.
+
+Benötigte Environment Variables:
+
+```text
+STRAVA_CLIENT_ID=...
+STRAVA_CLIENT_SECRET=...
+STRAVA_REDIRECT_URI=https://deine-vercel-url.vercel.app/api/strava/callback
+```
+
+Optional empfohlen:
+
+```text
+STRAVA_COOKIE_SECRET=ein-langer-zufaelliger-secret
+APP_ORIGIN=https://deine-vercel-url.vercel.app
+```
+
+Die App speichert den Strava Client Secret nicht im Frontend. OAuth-Tokens werden serverseitig verarbeitet und verschlüsselt in einem `HttpOnly` Cookie pro Profil abgelegt. Im Fortschritt-Tab kann jedes Profil seinen eigenen Strava-Account verbinden und Läufe synchronisieren.
+
+Nur Aktivitäten vom Typ `Run` zählen. Wenn in der aktuellen Woche an einem Joggingtag ein passender Strava-Lauf gefunden wird, markiert die App den Tag automatisch als erledigt und zeigt "Automatisch erledigt durch Strava".
+
 ## Auf dem iPhone zum Homescreen hinzufügen
 
 1. App-URL in Safari öffnen.
@@ -58,9 +89,9 @@ http://localhost:8080
 
 Die App startet danach wie eine installierte Web-App im Vollbildmodus.
 
-## Offline-Funktion
+## Online und Offline
 
-Beim ersten Besuch werden `index.html`, `style.css`, `app.js`, `manifest.json` und der Service Worker im Cache gespeichert. Danach kann die App auch ohne Internetverbindung geöffnet werden. Fortschritt und Login bleiben über `localStorage` pro Profil erhalten.
+Die App ist nicht mehr als reine Offline-App gedacht. Grundfunktionen wie Login, manuelles Abhaken und lokaler Fortschritt funktionieren weiterhin über `localStorage`. Strava-Synchronisation benötigt Internet und das Vercel-Backend.
 
 ## GitHub Pages
 
@@ -74,3 +105,5 @@ Wenn GitHub Pages nicht automatisch aktiviert wurde:
 6. `Save` klicken.
 
 Danach ist die App über die GitHub-Pages-URL des Repositorys erreichbar.
+
+Hinweis: GitHub Pages reicht nur für das statische Frontend. Für Strava muss die App auf Vercel oder einer vergleichbaren Plattform mit sicheren Environment Variables deployed werden.

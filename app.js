@@ -2,7 +2,8 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 3";
+const APP_VERSION = "Version 4";
+const STRAVA_API_BASE = "/api/strava";
 
 const profiles = {
   ale: { label: "Ale", hasStrength: true },
@@ -248,6 +249,7 @@ const strengthPlans = {
 let currentProfile = null;
 let activeTab = "today";
 let selectedStrengthPlan = null;
+let pendingStravaSyncProfile = null;
 let state = loadState();
 
 const loginView = document.querySelector("#loginView");
@@ -264,11 +266,12 @@ const progressContent = document.querySelector("#progressContent");
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
+  pendingStravaSyncProfile = readStravaReturnProfile();
   bindLogin();
   bindTabs();
   registerServiceWorker();
 
-  const storedProfile = normalizeProfile(localStorage.getItem(storageKeys.profile) || "");
+  const storedProfile = pendingStravaSyncProfile || normalizeProfile(localStorage.getItem(storageKeys.profile) || "");
   if (storedProfile) {
     openProfile(storedProfile);
   } else {
@@ -322,6 +325,11 @@ function openProfile(profile) {
   loginView.classList.add("is-hidden");
   mainView.classList.remove("is-hidden");
   setTab("today");
+
+  if (pendingStravaSyncProfile === profile) {
+    pendingStravaSyncProfile = null;
+    syncStravaActivities({ silent: true });
+  }
 }
 
 function showLogin() {
@@ -629,19 +637,22 @@ function renderProgress() {
         <span style="width: ${percent}%"></span>
       </div>
     </article>
+    ${renderStravaCard()}
     <article class="info-card">
       <h2>Wochentage</h2>
       <div class="day-pill-grid">
         ${weekIndexes.map((dayIndex) => {
           const done = isDayDone(currentProfile, dayIndex);
+          const stravaMatch = getStravaMatch(currentProfile, dayIndex);
           return `
-            <div class="day-pill ${done ? "is-done" : ""}">
+            <div class="day-pill ${done ? "is-done" : ""} ${stravaMatch ? "is-strava-done" : ""}">
               <strong>${escapeHtml(weekdayShort[dayIndex])}</strong>
-              <span>${done ? "erledigt" : "offen"}</span>
+              <span>${stravaMatch ? "Strava" : done ? "erledigt" : "offen"}</span>
             </div>
           `;
         }).join("")}
       </div>
+      ${renderStravaBadges()}
     </article>
     <button class="reset-button" type="button" id="resetWeekButton">Woche zurücksetzen</button>
     <p class="app-version">${APP_VERSION}</p>
@@ -651,6 +662,226 @@ function renderProgress() {
     resetWeek(currentProfile);
     renderAll();
   });
+
+  const connectButton = document.querySelector("#stravaConnectButton");
+  connectButton?.addEventListener("click", connectStrava);
+
+  const syncButton = document.querySelector("#stravaSyncButton");
+  syncButton?.addEventListener("click", () => syncStravaActivities());
+}
+
+function renderStravaCard() {
+  const strava = getProfileData(currentProfile).strava || {};
+  const connected = Boolean(strava.connected && strava.athlete);
+  const runs = Array.isArray(strava.runs) ? strava.runs.slice(0, 3) : [];
+  const staticHostWarning = isGitHubPagesHost()
+    ? "Strava braucht ein Vercel-Deployment. GitHub Pages kann kein sicheres Backend ausführen."
+    : "";
+  const status = connected
+    ? `Verbunden als ${formatAthleteName(strava.athlete)}`
+    : "Nicht verbunden";
+
+  return `
+    <article class="strava-card">
+      <div class="strava-card-head">
+        <div>
+          <p class="card-kicker">Strava</p>
+          <h2>Strava</h2>
+          <p>${escapeHtml(status)}</p>
+        </div>
+        <span class="strava-dot ${connected ? "is-connected" : ""}"></span>
+      </div>
+      <div class="strava-actions">
+        <button class="primary-button" type="button" id="stravaConnectButton">Mit Strava verbinden</button>
+        <button class="ghost-button" type="button" id="stravaSyncButton">Läufe synchronisieren</button>
+      </div>
+      ${staticHostWarning ? `<p class="strava-error">${escapeHtml(staticHostWarning)}</p>` : ""}
+      ${strava.message ? `<p class="strava-message">${escapeHtml(strava.message)}</p>` : ""}
+      ${strava.error ? `<p class="strava-error">${escapeHtml(strava.error)}</p>` : ""}
+      ${runs.length ? `
+        <div class="strava-run-list">
+          ${runs.map((run) => `
+            <div class="strava-run">
+              <strong>${escapeHtml(formatRunDate(run.startDateLocal))}</strong>
+              <span>${escapeHtml(run.distance)} · ${escapeHtml(run.pace)} · ${escapeHtml(run.duration)}</span>
+              <small>${escapeHtml(run.type)}</small>
+            </div>
+          `).join("")}
+        </div>
+      ` : ""}
+    </article>
+  `;
+}
+
+function renderStravaBadges() {
+  const profileWeek = getProfileWeek(currentProfile);
+  const matches = profileWeek.stravaMatches || {};
+  const rows = weekIndexes
+    .filter((dayIndex) => matches[dayIndex])
+    .map((dayIndex) => `
+      <div class="strava-badge">
+        <strong>${escapeHtml(weekdays[dayIndex])}</strong>
+        <span>Automatisch erledigt durch Strava</span>
+      </div>
+    `);
+
+  return rows.length ? `<div class="strava-badge-list">${rows.join("")}</div>` : "";
+}
+
+function getProfileData(profile) {
+  state[profile] ||= {};
+  return state[profile];
+}
+
+function getStravaMatch(profile, dayIndex) {
+  return getProfileWeek(profile).stravaMatches?.[dayIndex] || null;
+}
+
+function readStravaReturnProfile() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("strava") !== "connected") return null;
+
+  const profile = normalizeProfile(params.get("profile"));
+  params.delete("strava");
+  params.delete("profile");
+  params.delete("state");
+
+  const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
+  window.history.replaceState({}, document.title, cleanUrl);
+  return profile;
+}
+
+function connectStrava() {
+  if (isGitHubPagesHost()) {
+    setStravaMessage(currentProfile, "", "GitHub Pages kann kein sicheres Strava-Backend ausführen. Bitte die Vercel-Version verwenden.");
+    renderProgress();
+    return;
+  }
+
+  const returnTo = `${window.location.origin}${window.location.pathname}`;
+  window.location.href = `${STRAVA_API_BASE}/login?profile=${encodeURIComponent(currentProfile)}&returnTo=${encodeURIComponent(returnTo)}`;
+}
+
+async function syncStravaActivities(options = {}) {
+  const profile = currentProfile;
+  if (!profile) return;
+  if (isGitHubPagesHost()) {
+    setStravaMessage(profile, "", "Strava-Sync ist nur auf dem Vercel-Deployment verfügbar.");
+    renderProgress();
+    return;
+  }
+
+  setStravaMessage(profile, "Läufe werden synchronisiert.", "");
+  if (!options.silent) renderProgress();
+
+  try {
+    const response = await fetch(`${STRAVA_API_BASE}/activities?profile=${encodeURIComponent(profile)}`, {
+      credentials: "include"
+    });
+
+    if (response.status === 401) {
+      setStravaConnection(profile, { connected: false, error: "Strava ist noch nicht verbunden.", message: "" });
+      renderAll();
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error("Strava-Synchronisation fehlgeschlagen.");
+    }
+
+    const data = await response.json();
+    const runs = Array.isArray(data.runs) ? data.runs : [];
+    const matches = applyStravaRunsToProgress(profile, runs);
+    setStravaConnection(profile, {
+      connected: true,
+      athlete: data.athlete,
+      runs: runs.slice(0, 3),
+      lastSync: new Date().toISOString(),
+      message: matches
+        ? `${matches} Jogging-Einheit automatisch erledigt.`
+        : "Synchronisiert. Kein passender geplanter Lauf gefunden.",
+      error: ""
+    });
+    saveState();
+    renderAll();
+  } catch (error) {
+    setStravaMessage(profile, "", error.message || "Strava-Synchronisation fehlgeschlagen.");
+    renderAll();
+  }
+}
+
+function setStravaConnection(profile, data) {
+  const profileData = getProfileData(profile);
+  profileData.strava = { ...(profileData.strava || {}), ...data };
+  saveState();
+}
+
+function setStravaMessage(profile, message, error) {
+  setStravaConnection(profile, { message, error });
+}
+
+function applyStravaRunsToProgress(profile, runs) {
+  let matches = 0;
+  const profileWeek = getProfileWeek(profile);
+  profileWeek.stravaMatches ||= {};
+
+  runs.forEach((run) => {
+    const dayIndex = getRunDayIndex(run);
+    if (dayIndex === null || dayIndex === undefined) return;
+    if (!isCurrentWeek(run.startDateLocal)) return;
+    if (!isPlannedJoggingDay(profile, dayIndex)) return;
+    if (!runMeetsPlannedDistance(profile, dayIndex, run.distanceKm)) return;
+
+    if (!profileWeek.days[dayIndex]) matches += 1;
+    profileWeek.days[dayIndex] = true;
+    profileWeek.stravaMatches[dayIndex] = {
+      id: run.id,
+      distance: run.distance,
+      pace: run.pace,
+      duration: run.duration,
+      startDateLocal: run.startDateLocal
+    };
+  });
+
+  return matches;
+}
+
+function isPlannedJoggingDay(profile, dayIndex) {
+  return planByProfile[profile]?.[dayIndex]?.labels?.includes("Jogging");
+}
+
+function runMeetsPlannedDistance(profile, dayIndex, distanceKm) {
+  const minDistance = extractMinimumDistance(planByProfile[profile]?.[dayIndex]?.amount || "");
+  if (!minDistance) return true;
+  return Number(distanceKm) >= minDistance * 0.85;
+}
+
+function extractMinimumDistance(value) {
+  const match = String(value).match(/(\d+(?:[.,]\d+)?)/);
+  return match ? Number(match[1].replace(",", ".")) : null;
+}
+
+function getRunDayIndex(run) {
+  if (!run.startDateLocal) return null;
+  return new Date(run.startDateLocal).getDay();
+}
+
+function isCurrentWeek(dateValue) {
+  if (!dateValue) return false;
+  return getWeekKey(new Date(dateValue)) === getWeekKey(new Date());
+}
+
+function formatAthleteName(athlete = {}) {
+  return [athlete.firstname, athlete.lastname].filter(Boolean).join(" ") || athlete.username || "Strava";
+}
+
+function formatRunDate(value) {
+  if (!value) return "Unbekannt";
+  return new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit" }).format(new Date(value));
+}
+
+function isGitHubPagesHost() {
+  return window.location.hostname.endsWith("github.io");
 }
 
 function loadState() {
@@ -739,7 +970,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=3").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=4").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 

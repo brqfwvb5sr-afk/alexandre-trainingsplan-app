@@ -1,0 +1,9 @@
+{
+  "name": "alexandre-trainingsplan-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "check": "node --check app.js && node --check service-worker.js && node --check api/strava/login.js && node --check api/strava/callback.js && node --check api/strava/activities.js && node --check lib/strava.js"
+  }
+}
