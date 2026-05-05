@@ -16,6 +16,16 @@ Moderne iPhone-optimierte Web-App für Ale und Nevio. Die App hilft Schülern, J
 - PWA-Unterstützung mit `manifest.json`
 - iPhone-freundliches Liquid-Glass-Design mit Safe-Area-Unterstützung
 
+## Live-App
+
+Die Vercel-Version mit sicherem Backend ist hier erreichbar:
+
+```text
+https://alexandre-trainingsplan-app.vercel.app
+```
+
+Für die Strava-Integration muss diese Vercel-Version verwendet werden. Die GitHub-Pages-Version kann weiterhin das statische Frontend anzeigen, aber keine sicheren API-Routen ausführen.
+
 ## Benutzerprofile
 
 ### Ale
@@ -61,19 +71,25 @@ vercel dev
 
 GitHub Pages kann kein sicheres Backend ausführen. Der Strava Client Secret darf nicht im Browser stehen, deshalb funktionieren die Routen `/api/strava/login`, `/api/strava/callback` und `/api/strava/activities` nur auf einem Backend-Deployment, z. B. Vercel.
 
-Benötigte Environment Variables:
+Auf Vercel sind bereits gesetzt:
+
+```text
+APP_ORIGIN=https://alexandre-trainingsplan-app.vercel.app
+STRAVA_REDIRECT_URI=https://alexandre-trainingsplan-app.vercel.app/api/strava/callback
+STRAVA_COOKIE_SECRET=<zufällig erzeugt>
+```
+
+Diese zwei Werte müssen noch in Vercel unter `Project Settings` → `Environment Variables` ergänzt werden:
 
 ```text
 STRAVA_CLIENT_ID=...
 STRAVA_CLIENT_SECRET=...
-STRAVA_REDIRECT_URI=https://deine-vercel-url.vercel.app/api/strava/callback
 ```
 
-Optional empfohlen:
+In der Strava-Developer-App muss bei `Authorization Callback Domain` diese Domain stehen:
 
 ```text
-STRAVA_COOKIE_SECRET=ein-langer-zufaelliger-secret
-APP_ORIGIN=https://deine-vercel-url.vercel.app
+alexandre-trainingsplan-app.vercel.app
 ```
 
 Die App speichert den Strava Client Secret nicht im Frontend. OAuth-Tokens werden serverseitig verarbeitet und verschlüsselt in einem `HttpOnly` Cookie pro Profil abgelegt. Im Fortschritt-Tab kann jedes Profil seinen eigenen Strava-Account verbinden und Läufe synchronisieren.
