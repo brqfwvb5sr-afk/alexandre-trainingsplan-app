@@ -739,16 +739,24 @@ function getStravaMatch(profile, dayIndex) {
 
 function readStravaReturnProfile() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get("strava") !== "connected") return null;
+  const stravaStatus = params.get("strava");
+  if (!stravaStatus) return null;
 
   const profile = normalizeProfile(params.get("profile"));
+  if (profile && stravaStatus === "error") {
+    const message = params.get("message") || "Strava-Verbindung fehlgeschlagen. Bitte erneut versuchen.";
+    localStorage.setItem(storageKeys.profile, profile);
+    setStravaMessage(profile, "", message);
+  }
+
   params.delete("strava");
   params.delete("profile");
   params.delete("state");
+  params.delete("message");
 
   const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
   window.history.replaceState({}, document.title, cleanUrl);
-  return profile;
+  return stravaStatus === "connected" ? profile : null;
 }
 
 function connectStrava() {

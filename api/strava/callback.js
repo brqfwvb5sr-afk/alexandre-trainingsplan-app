@@ -10,6 +10,8 @@ const {
 } = require("../../lib/strava");
 
 module.exports = async function handler(req, res) {
+  let returnTo = null;
+  let profile = null;
   try {
     if (req.method !== "GET") {
       res.statusCode = 405;
@@ -20,10 +22,22 @@ module.exports = async function handler(req, res) {
 
     const config = getConfig();
     const state = verifyState(req.query.state, config.cookieSecret);
-    const profile = normalizeProfile(state?.profile);
-    if (!state || !profile || !req.query.code) {
+    profile = normalizeProfile(state?.profile);
+    returnTo = state?.returnTo;
+
+    if (!state || !profile) {
       res.statusCode = 400;
       res.end("Invalid Strava callback");
+      return;
+    }
+
+    if (req.query.error) {
+      redirectWithError(res, returnTo, profile, "Strava-Zugriff wurde abgebrochen.");
+      return;
+    }
+
+    if (!req.query.code) {
+      redirectWithError(res, returnTo, profile, "Strava hat keinen Login-Code gesendet. Bitte erneut verbinden.");
       return;
     }
 
@@ -42,6 +56,20 @@ module.exports = async function handler(req, res) {
     res.setHeader("Location", appendParams(state.returnTo, { strava: "connected", profile }));
     res.end();
   } catch (error) {
+    if (returnTo && profile) {
+      redirectWithError(res, returnTo, profile, "Strava-Verbindung fehlgeschlagen. Bitte Client ID, Client Secret und Callback Domain prüfen.");
+      return;
+    }
     sendError(res, error);
   }
 };
+
+function redirectWithError(res, returnTo, profile, message) {
+  res.statusCode = 302;
+  res.setHeader("Location", appendParams(returnTo, {
+    strava: "error",
+    profile,
+    message
+  }));
+  res.end();
+}
