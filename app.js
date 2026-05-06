@@ -2,7 +2,7 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 7";
+const APP_VERSION = "Version 8";
 const STRAVA_API_BASE = "/api/strava";
 
 const profiles = {
@@ -42,16 +42,16 @@ const planByProfile = {
     },
     3: {
       category: "Kraft",
-      title: "Kraft A",
-      amount: "Oberkörper + Core",
+      title: "Kraft B",
+      amount: "Beine + Core",
       intensity: "Kontrolliert",
       explanation: "Saubere Wiederholungen sind wichtiger als Tempo.",
       status: "Pflicht",
       optional: "1.5-2 km lockerer Lauf, nur wenn du dich fit fühlst",
-      weekTitle: "Kraft A",
-      weekAmount: "Oberkörper + Core",
+      weekTitle: "Kraft B",
+      weekAmount: "Beine + Core",
       labels: ["Kraft", "Optional"],
-      strengthPlanId: "a"
+      strengthPlanId: "b"
     },
     4: {
       category: "Jogging",
@@ -1124,7 +1124,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=7").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=8").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 
