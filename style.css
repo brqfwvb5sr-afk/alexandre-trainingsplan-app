@@ -635,6 +635,16 @@ input::placeholder {
   background: rgba(255, 255, 255, 0.12);
 }
 
+.plan-label.is-cardio-calisthenics {
+  color: #061018;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  border-color: transparent;
+}
+
+.today-strength-link {
+  margin-top: 10px;
+}
+
 .rule-line {
   display: inline-flex;
   padding: 10px 13px;
@@ -744,6 +754,18 @@ input::placeholder {
   color: var(--muted);
   font-size: 0.92rem;
   line-height: 1.35;
+}
+
+.exercise-extra {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 9px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #061018;
+  background: var(--amber);
+  font-size: 0.78rem;
+  font-weight: 900;
 }
 
 .exercise-card.is-done {

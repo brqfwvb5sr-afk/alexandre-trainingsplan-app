@@ -2,12 +2,12 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 5";
+const APP_VERSION = "Version 6";
 const STRAVA_API_BASE = "/api/strava";
 
 const profiles = {
   ale: { label: "Ale", hasStrength: true },
-  nevio: { label: "Nevio", hasStrength: false }
+  nevio: { label: "Nevio", hasStrength: true }
 };
 
 const weekdays = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
@@ -50,7 +50,8 @@ const planByProfile = {
       optional: "1.5-2 km lockerer Lauf, nur wenn du dich fit fühlst",
       weekTitle: "Kraft A",
       weekAmount: "Oberkörper + Core",
-      labels: ["Kraft", "Optional"]
+      labels: ["Kraft", "Optional"],
+      strengthPlanId: "a"
     },
     4: {
       category: "Jogging",
@@ -98,93 +99,98 @@ const planByProfile = {
       optional: "Spaziergang oder Stepper locker",
       weekTitle: "Kraft B",
       weekAmount: "Beine + Core",
-      labels: ["Kraft", "Optional"]
+      labels: ["Kraft", "Optional"],
+      strengthPlanId: "b"
     }
   },
   nevio: {
     1: {
-      category: "Jogging",
-      title: "Lockerer Lauf",
-      amount: "2.0-2.5 km",
-      intensity: "Locker",
-      explanation: "Du solltest noch reden können.",
+      category: "Kraft",
+      title: "Rücken + Brust",
+      amount: "45-70 Minuten",
+      intensity: "Mittel",
+      explanation: "Maschinen sauber führen, ohne Schwung arbeiten.",
       status: "Pflicht",
-      optional: "10 Minuten Dehnen",
-      weekTitle: "Jogging locker",
-      weekAmount: "2.0-2.5 km",
-      labels: ["Jogging"]
+      optional: "Aufwärmen: Liegestütze, Klimmzüge oder Theraband",
+      weekTitle: "Rücken + Brust",
+      weekAmount: "45-70 Minuten",
+      labels: ["Kraft"],
+      strengthPlanId: "nevio-mo"
     },
     2: {
-      category: "Pause",
-      title: "Locker bewegen",
-      amount: "Kein Pflichtlauf",
-      intensity: "Sehr locker",
-      explanation: "Heute nur bewegen, wenn du dich frisch fühlst.",
-      status: "Optional",
-      optional: "1.5-2 km sehr locker",
-      weekTitle: "Locker bewegen",
-      weekAmount: "optional 1.5-2 km",
-      labels: ["Pause", "Optional"]
+      category: "Kraft",
+      title: "Beine + Bauch + unterer Rücken",
+      amount: "45-70 Minuten",
+      intensity: "Mittel",
+      explanation: "Kontrollierte Wiederholungen, stabiler Stand.",
+      status: "Pflicht",
+      optional: "Aufwärmen: Laufband locker",
+      weekTitle: "Beine + Bauch + unterer Rücken",
+      weekAmount: "45-70 Minuten",
+      labels: ["Kraft"],
+      strengthPlanId: "nevio-di"
     },
     3: {
-      category: "Kraft",
-      title: "Kraftplan fehlt",
-      amount: "Daten an Ale schicken",
-      intensity: "Kein Krafttraining",
-      explanation: "Heute wäre Krafttraining. Für Nevio ist noch kein Kraftplan eingetragen.",
-      status: "Info",
-      optional: "Ziele, Equipment und Trainingstage notieren",
-      weekTitle: "Kraftplan fehlt",
-      weekAmount: "Daten an Ale schicken",
-      labels: ["Kraft"]
-    },
-    4: {
-      category: "Jogging",
-      title: "Lockerer Lauf",
-      amount: "2.5-3 km",
-      intensity: "Locker",
-      explanation: "Ruhig laufen, gleichmäßig atmen.",
-      status: "Pflicht",
-      optional: "Plank 2 x 45 Sekunden, nur wenn du willst",
-      weekTitle: "Jogging locker",
-      weekAmount: "2.5-3 km + optional Core",
-      labels: ["Jogging", "Optional"]
-    },
-    5: {
       category: "Pause",
       title: "Pause",
-      amount: "Keine Einheit",
+      amount: "Keine Kraftübungen",
       intensity: "Sehr locker",
-      explanation: "Heute erholen. Regeneration ist Teil des Plans.",
+      explanation: "Regeneration. Optional locker bewegen oder dehnen.",
       status: "Pflicht",
-      optional: "15-20 Minuten sehr locker bewegen",
+      optional: "Spazieren oder leicht dehnen",
       weekTitle: "Pause",
       weekAmount: "Regeneration",
       labels: ["Pause", "Optional"]
     },
-    6: {
-      category: "Jogging",
-      title: "Langer Lauf",
-      amount: "3 km",
-      intensity: "Locker",
-      explanation: "Nicht Vollgas. Du sollst sauber durchlaufen.",
+    4: {
+      category: "Kraft",
+      title: "Arme + Schultern",
+      amount: "45-70 Minuten",
+      intensity: "Mittel",
+      explanation: "Ruhig curlen, drücken und heben. Keine Schwung-Wiederholungen.",
       status: "Pflicht",
-      optional: "+0.5 km pro Woche nur, wenn es sich gut anfühlt",
-      weekTitle: "Langer Lauf",
-      weekAmount: "3 km",
-      labels: ["Jogging"]
+      optional: "Aufwärmen: Liegestütze",
+      weekTitle: "Arme + Schultern",
+      weekAmount: "45-70 Minuten",
+      labels: ["Kraft"],
+      strengthPlanId: "nevio-do"
+    },
+    5: {
+      category: "Cardio + Calisthenics",
+      title: "Cardio + Calisthenics",
+      amount: "45-70 Minuten",
+      intensity: "Mittel",
+      explanation: "Saubere Körpergewichtsübungen plus lockeres Laufband.",
+      status: "Pflicht",
+      optional: "Aufwärmen: Theraband",
+      weekTitle: "Cardio + Calisthenics",
+      weekAmount: "Pull-Ups, Dips, Push-Ups + Laufband",
+      labels: ["Cardio + Calisthenics"],
+      strengthPlanId: "nevio-fr"
+    },
+    6: {
+      category: "Jogging / Erholung",
+      title: "Jogging / Erholung",
+      amount: "Optional",
+      intensity: "Locker",
+      explanation: "Optional lockerer Lauf nach Joggingplan oder Erholung.",
+      status: "Optional",
+      optional: "Langer Lauf 3 km nur, wenn du dich fit fühlst",
+      weekTitle: "Jogging / optional",
+      weekAmount: "lockerer Lauf oder Erholung",
+      labels: ["Jogging", "Optional"]
     },
     0: {
-      category: "Kraft",
-      title: "Kraftplan fehlt",
-      amount: "Daten an Ale schicken",
-      intensity: "Kein Krafttraining",
-      explanation: "Heute wäre Krafttraining. Für Nevio ist noch kein Kraftplan eingetragen.",
-      status: "Info",
-      optional: "Ziele, Equipment und Trainingstage notieren",
-      weekTitle: "Kraftplan fehlt",
-      weekAmount: "Daten an Ale schicken",
-      labels: ["Kraft"]
+      category: "Erholung",
+      title: "Erholung",
+      amount: "Optional",
+      intensity: "Sehr locker",
+      explanation: "Erholen, spazieren oder locker dehnen.",
+      status: "Optional",
+      optional: "Spaziergang oder leichtes Dehnen",
+      weekTitle: "Erholung / optional",
+      weekAmount: "Spaziergang oder lockeres Dehnen",
+      labels: ["Pause", "Optional"]
     }
   }
 };
@@ -219,30 +225,92 @@ const joggingCards = [
   }
 ];
 
-const strengthPlans = {
-  a: {
-    id: "a",
-    title: "Kraft A",
-    subtitle: "Oberkörper + Core",
-    exercises: [
-      ["pushups", "Liegestütze", "3 x max sauber", "Körper gerade halten, nicht ins Hohlkreuz fallen."],
-      ["row", "Rudern mit 10 kg", "3 x 10-12 pro Seite", "Rücken gerade, Ellbogen eng am Körper ziehen."],
-      ["press", "Schulterdrücken mit 3 kg", "3 x 12-15", "Kontrolliert drücken, Schultern nicht hochziehen."],
-      ["curls", "Bizeps-Curls mit 3 kg", "3 x 15-20", "Ellbogen ruhig halten, nicht schwingen."],
-      ["plank", "Plank", "3 x 45-60 Sekunden", "Bauch anspannen, Rücken gerade."]
-    ]
+const strengthPlansByProfile = {
+  ale: {
+    a: {
+      id: "a",
+      title: "Kraft A",
+      subtitle: "Oberkörper + Core",
+      exercises: [
+        ["pushups", "Liegestütze", "3 x max sauber", "Körper gerade halten, nicht ins Hohlkreuz fallen."],
+        ["row", "Rudern mit 10 kg", "3 x 10-12 pro Seite", "Rücken gerade, Ellbogen eng am Körper ziehen."],
+        ["press", "Schulterdrücken mit 3 kg", "3 x 12-15", "Kontrolliert drücken, Schultern nicht hochziehen."],
+        ["curls", "Bizeps-Curls mit 3 kg", "3 x 15-20", "Ellbogen ruhig halten, nicht schwingen."],
+        ["plank", "Plank", "3 x 45-60 Sekunden", "Bauch anspannen, Rücken gerade."]
+      ]
+    },
+    b: {
+      id: "b",
+      title: "Kraft B",
+      subtitle: "Beine + Core",
+      exercises: [
+        ["squats", "Kniebeugen", "4 x 15-25", "Knie stabil, Rücken gerade, tief aber kontrolliert."],
+        ["lunges", "Ausfallschritte", "3 x 10 pro Bein", "Langsam und kontrolliert, Knie nicht nach innen kippen."],
+        ["calves", "Wadenheben", "3 x 20", "Oben kurz halten, langsam senken."],
+        ["legraises", "Beinheben", "3 x 12-15", "Bauch anspannen, nicht mit Schwung arbeiten."],
+        ["sideplank", "Seitstütz", "2 x 30-45 Sekunden pro Seite", "Hüfte oben halten, Körper gerade."]
+      ]
+    }
   },
-  b: {
-    id: "b",
-    title: "Kraft B",
-    subtitle: "Beine + Core",
-    exercises: [
-      ["squats", "Kniebeugen", "4 x 15-25", "Knie stabil, Rücken gerade, tief aber kontrolliert."],
-      ["lunges", "Ausfallschritte", "3 x 10 pro Bein", "Langsam und kontrolliert, Knie nicht nach innen kippen."],
-      ["calves", "Wadenheben", "3 x 20", "Oben kurz halten, langsam senken."],
-      ["legraises", "Beinheben", "3 x 12-15", "Bauch anspannen, nicht mit Schwung arbeiten."],
-      ["sideplank", "Seitstütz", "2 x 30-45 Sekunden pro Seite", "Hüfte oben halten, Körper gerade."]
-    ]
+  nevio: {
+    "nevio-mo": {
+      id: "nevio-mo",
+      dayLabel: "Mo",
+      title: "Rücken + Brust",
+      subtitle: "Latziehen, Rudern, Brust",
+      warmup: "Liegestütze, Klimmzüge oder Theraband",
+      exercises: [
+        ["latziehen", "Seilzug Latziehen", "3 x 12", "Brust leicht raus, kontrolliert zur oberen Brust ziehen, nicht mit Schwung arbeiten."],
+        ["rudern-niedrig", "Plate Loaded Rudern niedrig", "3 x 12", "Rücken gerade halten, Schulterblätter aktiv nach hinten ziehen."],
+        ["brustpresse", "Plate Loaded Brustpresse", "3 x 12", "Kontrolliert drücken, Schultern unten halten, nicht komplett hektisch ausstrecken."],
+        ["schraegbank", "Schrägbank Maschine", "3 x 12", "Fokus auf obere Brust, langsam ablassen, sauber drücken.", "Top mit Buch Y"],
+        ["butterfly", "Maschine Butterflys mit gestreckten Armen", "3 x 12", "Arme leicht gebeugt oder gestreckt halten, Brust bewusst anspannen, Bewegung kontrollieren."]
+      ]
+    },
+    "nevio-di": {
+      id: "nevio-di",
+      dayLabel: "Di",
+      title: "Beine + Bauch + unterer Rücken",
+      subtitle: "Leg Press, Core, Rücken",
+      warmup: "Laufband locker",
+      exercises: [
+        ["leg-press", "Leg Press", "4 x 12", "Füße stabil, Knie nicht nach innen kippen lassen, kontrolliert tief gehen."],
+        ["leg-extensions", "Leg Extensions", "3 x 12", "Oben kurz halten, langsam ablassen."],
+        ["leg-curl", "Leg Curl", "3 x 12", "Kontrolliert ziehen, nicht mit Schwung arbeiten."],
+        ["waden-beinpresse", "Waden an Beinpresse", "4-5 x 12", "Volle Bewegung, oben kurz halten, langsam senken."],
+        ["leg-raises", "Leg Raises", "3 x 12", "Bauch anspannen, Beine kontrolliert heben, nicht schwingen."],
+        ["crunches", "Crunches", "3 x 12", "Langsam hochrollen, Bauch bewusst anspannen."],
+        ["side-plank", "Plank seitlich", "2 x max", "Körper gerade halten, Hüfte nicht absinken lassen."],
+        ["hyperextensions", "Hyperextensions", "3 x 12", "Rücken kontrolliert strecken, nicht überstrecken."]
+      ]
+    },
+    "nevio-do": {
+      id: "nevio-do",
+      dayLabel: "Do",
+      title: "Arme + Schultern",
+      subtitle: "Bizeps, Trizeps, Seitheben",
+      warmup: "Liegestütze",
+      exercises: [
+        ["bizeps-maschine", "Maschine Bizeps Curls hoch", "3 x 12", "Ellbogen stabil halten, langsam und sauber curlen."],
+        ["hammer-curls", "Hammer Curls", "3 x 12", "Handflächen zueinander, nicht mit dem Oberkörper schwingen."],
+        ["trizeps-seilzug", "Seilzug Trizepsdrücken / Trizepsziehen", "3 x 12", "Ellbogen eng am Körper, unten Trizeps anspannen."],
+        ["trizeps-ueberkopf", "Überkopf Trizeps", "3 x 12", "Ellbogen möglichst ruhig halten, kontrolliert strecken."],
+        ["seitheben", "Kurzhantel Seitheben", "3 x 12", "Leicht gebeugte Arme, nicht zu hoch schwingen, Schultern nicht hochziehen."]
+      ]
+    },
+    "nevio-fr": {
+      id: "nevio-fr",
+      dayLabel: "Fr",
+      title: "Cardio + Calisthenics",
+      subtitle: "Pull-Ups, Dips, Push-Ups",
+      warmup: "Theraband",
+      exercises: [
+        ["pull-ups", "Pull-Ups", "3 x max", "Sauber ziehen, volle Kontrolle, nicht mit Schwung."],
+        ["dips", "Dips", "3 x max", "Schultern stabil halten, kontrolliert runter und hoch."],
+        ["push-ups", "Push-Ups", "3 x max", "Körper gerade, Brust Richtung Boden, sauber drücken."],
+        ["laufband", "Laufband", "20-30 Minuten · locker bis mittel", "Nicht komplett Vollgas, kontrolliert ausdauerorientiert laufen."]
+      ]
+    }
   }
 };
 
@@ -404,6 +472,11 @@ function renderToday() {
       <button class="done-button ${done ? "is-done" : ""}" type="button" data-day-toggle="${dayIndex}">
         ${done ? "Erledigt" : "Erledigt"}
       </button>
+      ${plan.strengthPlanId ? `
+        <button class="ghost-button wide-button today-strength-link" type="button" data-open-strength="${escapeAttr(plan.strengthPlanId)}">
+          Übungen anzeigen
+        </button>
+      ` : ""}
     </article>
 
     ${plan.optional ? `
@@ -417,6 +490,11 @@ function renderToday() {
   todayContent.querySelector("[data-day-toggle]").addEventListener("click", () => {
     toggleDayDone(currentProfile, dayIndex);
     renderAll();
+  });
+
+  todayContent.querySelector("[data-open-strength]")?.addEventListener("click", (event) => {
+    selectedStrengthPlan = event.currentTarget.dataset.openStrength;
+    setTab("strength");
   });
 }
 
@@ -504,56 +582,53 @@ function renderJogging() {
 }
 
 function renderStrength() {
-  if (!profiles[currentProfile].hasStrength) {
+  const plans = strengthPlansByProfile[currentProfile] || {};
+  const planList = Object.values(plans);
+
+  if (!planList.length) {
     strengthContent.innerHTML = `
       <div class="page-heading">
         <div class="page-topline">
-          <h1>Kraft</h1>
+          <h1>Krafttraining ${escapeHtml(profiles[currentProfile].label)}</h1>
           <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
         </div>
-        <p>Profil: Nevio</p>
+        <p>Keine Übungen eingetragen.</p>
       </div>
       <article class="info-card">
-        <h2>Noch kein Kraftplan vorhanden</h2>
-        <p>Nevio hat noch keinen eigenen Krafttrainingsplan. Schicke Ale deine Ziele, dein Equipment und deine möglichen Trainingstage.</p>
-        <button class="primary-button wide-button" type="button" id="showNevioInfo">Text für Ale anzeigen</button>
-        <div class="copy-area" id="nevioCopyArea">
-          <textarea class="copy-text" id="nevioCopyText" readonly>Hey Ale, kannst du mir meinen Kraftplan einbauen?
-Ziele:
-Equipment:
-Mögliche Trainingstage:
-Besonderheiten:</textarea>
-          <button class="ghost-button wide-button" type="button" id="copyNevioText">Text kopieren</button>
-          <p class="form-message" id="copyMessage"></p>
-        </div>
+        <h2>Kein Kraftplan eingetragen</h2>
+        <p>Für dieses Profil gibt es aktuell keine Kraftübungen.</p>
       </article>
     `;
-    bindNevioStrengthCard();
     return;
+  }
+
+  const profileLabel = profiles[currentProfile].label;
+  if (!selectedStrengthPlan || !plans[selectedStrengthPlan]) {
+    selectedStrengthPlan = null;
   }
 
   strengthContent.innerHTML = `
     <div class="page-heading">
       <div class="page-topline">
-        <h1>Krafttraining Ale</h1>
+        <h1>Krafttraining ${escapeHtml(profileLabel)}</h1>
         <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
       </div>
-      <p>Wähle A oder B.</p>
+      <p>Wähle deinen heutigen Plan.</p>
     </div>
 
     <div class="strength-choice-grid">
-      ${Object.values(strengthPlans).map((plan) => `
+      ${planList.map((plan) => `
         <button class="strength-choice ${selectedStrengthPlan === plan.id ? "is-selected" : ""}" type="button" data-strength-select="${plan.id}">
-          <span>${escapeHtml(plan.title)}</span>
+          <span>${escapeHtml(plan.dayLabel ? `${plan.dayLabel} - ${plan.title}` : plan.title)}</span>
           <strong>${escapeHtml(plan.subtitle)}</strong>
         </button>
       `).join("")}
     </div>
 
-    ${selectedStrengthPlan ? renderExerciseList(strengthPlans[selectedStrengthPlan]) : `
+    ${selectedStrengthPlan ? renderExerciseList(plans[selectedStrengthPlan]) : `
       <article class="optional-card">
         <p class="card-kicker">Checkliste</p>
-        <h3>Tippe auf Kraft A oder Kraft B.</h3>
+        <h3>Tippe auf eine Auswahlkarte.</h3>
       </article>
     `}
   `;
@@ -576,7 +651,13 @@ Besonderheiten:</textarea>
 function renderExerciseList(plan) {
   return `
     <div class="exercise-stack">
-      ${plan.exercises.map(([id, name, prescription, note]) => {
+      ${plan.warmup ? `
+        <article class="optional-card warmup-card">
+          <p class="card-kicker">Aufwärmen</p>
+          <h3>${escapeHtml(plan.warmup)}</h3>
+        </article>
+      ` : ""}
+      ${plan.exercises.map(([id, name, prescription, note, extra]) => {
         const checkId = `${plan.id}:${id}`;
         const done = isExerciseDone(currentProfile, checkId);
         return `
@@ -585,6 +666,7 @@ function renderExerciseList(plan) {
               <h2>${escapeHtml(name)}</h2>
               <strong>${escapeHtml(prescription)}</strong>
               <p>${escapeHtml(note)}</p>
+              ${extra ? `<small class="exercise-extra">${escapeHtml(extra)}</small>` : ""}
             </div>
             <button class="exercise-check" type="button" data-exercise-check="${escapeAttr(checkId)}" aria-pressed="${done}">
               ${done ? "Erledigt" : "Offen"}
@@ -594,28 +676,6 @@ function renderExerciseList(plan) {
       }).join("")}
     </div>
   `;
-}
-
-function bindNevioStrengthCard() {
-  const showButton = document.querySelector("#showNevioInfo");
-  const copyArea = document.querySelector("#nevioCopyArea");
-  const copyButton = document.querySelector("#copyNevioText");
-  const copyText = document.querySelector("#nevioCopyText");
-  const copyMessage = document.querySelector("#copyMessage");
-
-  showButton.addEventListener("click", () => {
-    copyArea.classList.add("is-visible");
-  });
-
-  copyButton.addEventListener("click", async () => {
-    copyText.select();
-    try {
-      await navigator.clipboard.writeText(copyText.value);
-      copyMessage.textContent = "Text kopiert.";
-    } catch {
-      copyMessage.textContent = "Text ist markiert und kann kopiert werden.";
-    }
-  });
 }
 
 function renderProgress() {
@@ -959,7 +1019,12 @@ function getWeekKey(date) {
 }
 
 function labelClass(label) {
-  return `is-${label.toLowerCase().replaceAll("ä", "ae").replaceAll(" ", "-")}`;
+  return `is-${String(label)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")}`;
 }
 
 function escapeHtml(value) {
@@ -987,7 +1052,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=5").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=6").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 
