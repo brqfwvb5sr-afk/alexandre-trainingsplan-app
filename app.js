@@ -2,12 +2,12 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 6";
+const APP_VERSION = "Version 7";
 const STRAVA_API_BASE = "/api/strava";
 
 const profiles = {
-  ale: { label: "Ale", hasStrength: true },
-  nevio: { label: "Nevio", hasStrength: true }
+  ale: { label: "Ale", hasStrength: true, hasStrava: true },
+  nevio: { label: "Nevio", hasStrength: true, hasStrava: false }
 };
 
 const weekdays = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
@@ -700,13 +700,13 @@ function renderProgress() {
         <span style="width: ${percent}%"></span>
       </div>
     </article>
-    ${renderStravaCard()}
+    ${supportsStrava(currentProfile) ? renderStravaCard() : ""}
     <article class="info-card">
       <h2>Wochentage</h2>
       <div class="day-pill-grid">
         ${weekIndexes.map((dayIndex) => {
           const done = isDayDone(currentProfile, dayIndex);
-          const stravaMatch = getStravaMatch(currentProfile, dayIndex);
+          const stravaMatch = supportsStrava(currentProfile) ? getStravaMatch(currentProfile, dayIndex) : null;
           return `
             <div class="day-pill ${done ? "is-done" : ""} ${stravaMatch ? "is-strava-done" : ""}">
               <strong>${escapeHtml(weekdayShort[dayIndex])}</strong>
@@ -715,7 +715,7 @@ function renderProgress() {
           `;
         }).join("")}
       </div>
-      ${renderStravaBadges()}
+      ${supportsStrava(currentProfile) ? renderStravaBadges() : ""}
     </article>
     <button class="reset-button" type="button" id="resetWeekButton">Woche zurücksetzen</button>
     <p class="app-version">${APP_VERSION}</p>
@@ -731,6 +731,9 @@ function renderProgress() {
 
   const syncButton = document.querySelector("#stravaSyncButton");
   syncButton?.addEventListener("click", () => syncStravaActivities());
+
+  const statusButton = document.querySelector("#stravaStatusButton");
+  statusButton?.addEventListener("click", () => checkStravaStatus());
 }
 
 function renderStravaCard() {
@@ -756,6 +759,7 @@ function renderStravaCard() {
       </div>
       <div class="strava-actions">
         <button class="primary-button" type="button" id="stravaConnectButton">Mit Strava verbinden</button>
+        <button class="ghost-button" type="button" id="stravaStatusButton">Verbindung prüfen</button>
         <button class="ghost-button" type="button" id="stravaSyncButton">Läufe synchronisieren</button>
       </div>
       ${staticHostWarning ? `<p class="strava-error">${escapeHtml(staticHostWarning)}</p>` : ""}
@@ -800,6 +804,10 @@ function getStravaMatch(profile, dayIndex) {
   return getProfileWeek(profile).stravaMatches?.[dayIndex] || null;
 }
 
+function supportsStrava(profile) {
+  return Boolean(profiles[profile]?.hasStrava);
+}
+
 function readStravaReturn() {
   const params = new URLSearchParams(window.location.search);
   const stravaStatus = params.get("strava");
@@ -807,6 +815,15 @@ function readStravaReturn() {
 
   const profile = normalizeProfile(params.get("profile"));
   if (!profile) return null;
+  if (!supportsStrava(profile)) {
+    params.delete("strava");
+    params.delete("profile");
+    params.delete("state");
+    params.delete("message");
+    const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
+    window.history.replaceState({}, document.title, cleanUrl);
+    return null;
+  }
 
   if (profile && stravaStatus === "error") {
     const message = params.get("message") || "Strava-Verbindung fehlgeschlagen. Bitte erneut versuchen.";
@@ -825,6 +842,8 @@ function readStravaReturn() {
 }
 
 function connectStrava() {
+  if (!supportsStrava(currentProfile)) return;
+
   if (isGitHubPagesHost()) {
     setStravaMessage(currentProfile, "", "GitHub Pages kann kein sicheres Strava-Backend ausführen. Bitte die Vercel-Version verwenden.");
     renderProgress();
@@ -838,6 +857,8 @@ function connectStrava() {
 async function syncStravaActivities(options = {}) {
   const profile = currentProfile;
   if (!profile) return;
+  if (!supportsStrava(profile)) return;
+
   if (isGitHubPagesHost()) {
     setStravaMessage(profile, "", "Strava-Sync ist nur auf dem Vercel-Deployment verfügbar.");
     renderProgress();
@@ -883,6 +904,57 @@ async function syncStravaActivities(options = {}) {
     renderAll();
   } catch (error) {
     setStravaMessage(profile, "", error.message || "Strava-Synchronisation fehlgeschlagen.");
+    renderAll();
+  }
+}
+
+async function checkStravaStatus() {
+  const profile = currentProfile;
+  if (!profile || !supportsStrava(profile)) return;
+
+  if (isGitHubPagesHost()) {
+    setStravaMessage(profile, "", "Strava funktioniert nur auf der Vercel-Version, nicht auf GitHub Pages.");
+    renderProgress();
+    return;
+  }
+
+  setStravaMessage(profile, "Strava-Verbindung wird geprüft.", "");
+  renderProgress();
+
+  try {
+    const response = await fetch(`${STRAVA_API_BASE}/status?profile=${encodeURIComponent(profile)}`, {
+      credentials: "include"
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || "Strava-Status konnte nicht geprüft werden.");
+    }
+
+    if (!data.configured) {
+      const missing = Array.isArray(data.missing) && data.missing.length ? data.missing.join(", ") : "Vercel-Variablen";
+      setStravaMessage(profile, "", `Backend erreichbar, aber es fehlen: ${missing}.`);
+      renderAll();
+      return;
+    }
+
+    if (data.connected) {
+      setStravaConnection(profile, {
+        connected: true,
+        athlete: data.athlete,
+        message: "Strava ist verbunden. Läufe können synchronisiert werden.",
+        error: ""
+      });
+    } else {
+      setStravaConnection(profile, {
+        connected: false,
+        message: "Backend ist bereit. Strava ist auf diesem Gerät noch nicht verbunden.",
+        error: ""
+      });
+    }
+    renderAll();
+  } catch (error) {
+    setStravaMessage(profile, "", error.message || "Strava-Status konnte nicht geprüft werden.");
     renderAll();
   }
 }
@@ -1052,7 +1124,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=6").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=7").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 

@@ -7,11 +7,10 @@ Moderne iPhone-optimierte Web-App für Ale und Nevio. Die App hilft Schülern, J
 - Profilauswahl für Ale und Nevio mit gespeichertem Login
 - Automatische Tageserkennung mit passendem Training für den aktuellen Wochentag
 - Joggingplan für beide Profile mit lockeren Läufen, Intervallen und Wochensteigerung
-- Krafttrainingsplan für Ale mit abhaken einzelner Übungen
-- Hinweis- und Kontaktkarte für Nevio, solange noch kein eigener Kraftplan existiert
+- Krafttrainingspläne für Ale und Nevio mit abhaken einzelner Übungen
 - Fortschritt pro Profil getrennt gespeichert
 - Wochenübersicht, Fortschrittsbalken, Motivationstext und Reset-Funktion
-- Optionale Strava-Integration für automatisch erkannte Jogging-Einheiten
+- Optionale Strava-Integration für Ale mit automatisch erkannten Jogging-Einheiten
 - Service Worker mit Network-First-Strategie für aktuelle App-Dateien
 - PWA-Unterstützung mit `manifest.json`
 - iPhone-freundliches Liquid-Glass-Design mit Safe-Area-Unterstützung
@@ -39,7 +38,7 @@ Ale ist 16 Jahre alt und trainiert für Muskelaufbau und bessere Ausdauer. Der P
 
 ### Nevio
 
-Nevio nutzt vorerst den gleichen Joggingplan wie Ale und bekommt eine eigene Fortschrittsspeicherung. Ein eigener Krafttrainingsplan ist noch nicht hinterlegt. Im Tab "Kraft" kann Nevio seine Infos für Ale vorbereiten.
+Nevio bekommt eine eigene Fortschrittsspeicherung und einen eigenen Krafttrainingsplan mit Rücken/Brust, Beine/Core, Arme/Schultern und Cardio/Calisthenics. Strava ist für Nevio in der App deaktiviert.
 
 ## Lokal starten
 
@@ -92,7 +91,7 @@ In der Strava-Developer-App muss bei `Authorization Callback Domain` diese Domai
 alexandre-trainingsplan-app.vercel.app
 ```
 
-Die App speichert den Strava Client Secret nicht im Frontend. OAuth-Tokens werden serverseitig verarbeitet und verschlüsselt in einem `HttpOnly` Cookie pro Profil abgelegt. Im Fortschritt-Tab kann jedes Profil seinen eigenen Strava-Account verbinden und Läufe synchronisieren.
+Die App speichert den Strava Client Secret nicht im Frontend. OAuth-Tokens werden serverseitig verarbeitet und verschlüsselt in einem `HttpOnly` Cookie abgelegt. Im Fortschritt-Tab kann Ale seinen Strava-Account verbinden, die Verbindung prüfen und Läufe synchronisieren. Für Nevio wird die Strava-Karte nicht angezeigt.
 
 Nur Aktivitäten vom Typ `Run` zählen. Wenn in der aktuellen Woche an einem Joggingtag ein passender Strava-Lauf gefunden wird, markiert die App den Tag automatisch als erledigt und zeigt "Automatisch erledigt durch Strava".
 

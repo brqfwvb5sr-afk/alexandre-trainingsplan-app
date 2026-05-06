@@ -1,9 +1,9 @@
-const CACHE_NAME = "trainingsplan-v6";
+const CACHE_NAME = "trainingsplan-v7";
 const APP_SHELL = [
   "./index.html",
-  "./style.css?v=6",
-  "./app.js?v=6",
-  "./manifest.json?v=6"
+  "./style.css?v=7",
+  "./app.js?v=7",
+  "./manifest.json?v=7"
 ];
 
 self.addEventListener("install", (event) => {

@@ -30,6 +30,10 @@ module.exports = async function handler(req, res) {
       res.end("Invalid Strava callback");
       return;
     }
+    if (profile !== "ale") {
+      redirectWithError(res, returnTo, profile, "Strava ist nur für Ale aktiviert.");
+      return;
+    }
 
     if (req.query.error) {
       redirectWithError(res, returnTo, profile, "Strava-Zugriff wurde abgebrochen.");

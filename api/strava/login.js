@@ -24,6 +24,11 @@ module.exports = async function handler(req, res) {
       res.end("Invalid profile");
       return;
     }
+    if (profile !== "ale") {
+      res.statusCode = 403;
+      res.end("Strava is only enabled for Ale");
+      return;
+    }
 
     const returnTo = safeReturnTo(req.query.returnTo, req);
     const state = createState({ profile, returnTo, iat: Date.now() }, config.cookieSecret);
@@ -31,8 +36,8 @@ module.exports = async function handler(req, res) {
       client_id: config.clientId,
       redirect_uri: config.redirectUri,
       response_type: "code",
-      approval_prompt: "auto",
-      scope: "read,activity:read",
+      approval_prompt: "force",
+      scope: "read,activity:read_all",
       state
     });
 

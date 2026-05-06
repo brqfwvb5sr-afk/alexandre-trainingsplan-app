@@ -24,6 +24,10 @@ module.exports = async function handler(req, res) {
       sendJson(res, 400, { error: "Invalid profile" });
       return;
     }
+    if (profile !== "ale") {
+      sendJson(res, 403, { connected: false, error: "Strava is only enabled for Ale" });
+      return;
+    }
 
     let session = readSession(req, profile, config);
     if (!session || session.profile !== profile) {
