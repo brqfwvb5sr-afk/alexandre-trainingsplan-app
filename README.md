@@ -95,14 +95,17 @@ Die App speichert den Strava Client Secret nicht im Frontend. OAuth-Tokens werde
 
 Nur Aktivitäten vom Typ `Run` zählen. Wenn in der aktuellen Woche an einem Joggingtag ein passender Strava-Lauf gefunden wird, markiert die App den Tag automatisch als erledigt und zeigt "Automatisch erledigt durch Strava".
 
-## Auf dem iPhone zum Homescreen hinzufügen
+## App auf iPhone Home-Bildschirm hinzufügen
 
-1. App-URL in Safari öffnen.
-2. Teilen-Button antippen.
-3. "Zum Home-Bildschirm" auswählen.
-4. Namen "Trainingsplan" bestätigen.
+1. Safari öffnen.
+2. Seite öffnen.
+3. Teilen-Button drücken.
+4. "Zum Home-Bildschirm" wählen.
+5. Hinzufügen drücken.
 
 Die App startet danach wie eine installierte Web-App im Vollbildmodus.
+
+Hinweis: Wenn vorher schon ein altes Icon auf dem Home-Bildschirm war, muss man das alte Home-Screen-Icon zuerst löschen und die App danach neu hinzufügen.
 
 ## Online und Offline
 

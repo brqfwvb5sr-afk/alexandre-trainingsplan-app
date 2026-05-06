@@ -2,7 +2,7 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 8";
+const APP_VERSION = "Version 6";
 const STRAVA_API_BASE = "/api/strava";
 
 const profiles = {
@@ -1124,7 +1124,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=8").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=6").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 

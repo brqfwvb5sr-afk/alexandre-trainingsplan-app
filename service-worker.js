@@ -1,15 +1,20 @@
-const CACHE_NAME = "trainingsplan-v8";
+const CACHE_NAME = "trainingsplan-v6";
 const APP_SHELL = [
   "./index.html",
-  "./style.css?v=8",
-  "./app.js?v=8",
-  "./manifest.json?v=8"
+  "./style.css?v=6",
+  "./app.js?v=6",
+  "./manifest.json",
+  "./manifest.json?v=6",
+  "./apple-touch-icon.png",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./favicon.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
+      .then((cache) => Promise.all(APP_SHELL.map((asset) => cache.add(asset).catch(() => undefined))))
       .then(() => self.skipWaiting())
   );
 });

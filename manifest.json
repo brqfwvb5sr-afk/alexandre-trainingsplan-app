@@ -1,19 +1,31 @@
 {
   "name": "Trainingsplan",
-  "short_name": "Training",
-  "description": "Moderne iPhone-Trainingsplan-Web-App für Ale und Nevio mit Jogging, Krafttraining und Fortschritt.",
-  "start_url": "./index.html",
+  "short_name": "Trainingsplan",
+  "description": "Trainingsplan-App für Jogging, Krafttraining und Fortschritt.",
+  "start_url": "./?v=6",
   "scope": "./",
   "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
   "orientation": "portrait",
-  "background_color": "#070a10",
-  "theme_color": "#0b1220",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23070a10'/%3E%3Cpath d='M132 330c42-75 74-112 126-112 48 0 76 30 122 30' fill='none' stroke='%237ef1d2' stroke-width='34' stroke-linecap='round'/%3E%3Ccircle cx='184' cy='168' r='38' fill='%236ea8ff'/%3E%3Cpath d='M136 386h240' stroke='%23ffd37a' stroke-width='30' stroke-linecap='round'/%3E%3C/svg%3E",
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
