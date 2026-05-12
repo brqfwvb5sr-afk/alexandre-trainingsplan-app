@@ -2,7 +2,7 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 7";
+const APP_VERSION = "Version 8";
 const STRAVA_API_BASE = "/api/strava";
 
 const profiles = {
@@ -24,26 +24,26 @@ const planByProfile = {
     1: {
       category: "Jogging",
       title: "Lockerer Lauf",
-      amount: "2.0-2.5 km",
+      amount: "3 km",
       intensity: "Locker",
       explanation: "Du solltest noch reden können.",
       status: "Pflicht",
       optional: "10 Minuten Dehnen",
       weekTitle: "Jogging locker",
-      weekAmount: "2.0-2.5 km",
+      weekAmount: "3 km",
       labels: ["Jogging"]
     },
     2: {
-      category: "Unihockey",
-      title: "Unihockey-Training",
-      amount: "Vereinstraining",
-      intensity: "Mittel bis hoch",
-      explanation: "Heute kein Gym. Unihockey ist genug Belastung.",
+      category: "Regeneration",
+      title: "Regeneration",
+      amount: "Kein Gym",
+      intensity: "Sehr locker",
+      explanation: "Heute bewusst rausnehmen. Wenn laufen, dann nur locker und kurz.",
       status: "Pflicht",
-      optional: "1.5-2 km sehr locker, nur wenn genug Energie da ist",
-      weekTitle: "Unihockey",
-      weekAmount: "kein Gym",
-      labels: ["Unihockey", "Kein Gym"]
+      optional: "1.5-2 km sehr locker, nur wenn du dich gut fühlst",
+      weekTitle: "Regeneration",
+      weekAmount: "kein Gym, höchstens 1.5-2 km locker",
+      labels: ["Pause", "Optional"]
     },
     3: {
       category: "Gym",
@@ -52,59 +52,59 @@ const planByProfile = {
       intensity: "Mittel",
       explanation: "Maschinen kontrolliert führen. Nicht bis komplett ans Limit.",
       status: "Pflicht",
-      optional: "5-10 Minuten Mobility oder lockeres Auslaufen",
+      optional: "Optional 1.5-2 km locker, wenn die Beine frisch sind",
       weekTitle: "Gym A",
-      weekAmount: "Ganzkörper Technik",
-      labels: ["Gym"],
+      weekAmount: "Ganzkörper Technik + optional lockerer Lauf",
+      labels: ["Gym", "Optional"],
       strengthPlanId: "gym-a"
     },
     4: {
       category: "Jogging",
       title: "Lockerer Lauf",
-      amount: "2.5-3 km",
+      amount: "3-3.5 km",
       intensity: "Locker",
       explanation: "Ruhig laufen, gleichmäßig atmen.",
       status: "Pflicht",
-      optional: "Plank 2 x 45 Sekunden",
+      optional: "4 x 15 Sekunden etwas schneller, nur wenn es locker bleibt",
       weekTitle: "Jogging locker",
-      weekAmount: "2.5-3 km + Core",
+      weekAmount: "3-3.5 km",
       labels: ["Jogging", "Optional"]
     },
     5: {
-      category: "Gym",
+      category: "Gym + Jogging",
       title: "Gym B",
-      amount: "Ganzkörper Aufbau",
+      amount: "Oberkörper + 2-3 km locker",
       intensity: "Mittel",
-      explanation: "Saubere Wiederholungen, Gewicht erst steigern wenn die Technik passt.",
+      explanation: "Arme, Schultern und Rücken belasten die Beine kaum. Danach locker laufen.",
       status: "Pflicht",
-      optional: "Nach dem Training locker dehnen",
+      optional: "Wenn du müde bist: Lauf auf 1.5-2 km kürzen",
       weekTitle: "Gym B",
-      weekAmount: "Ganzkörper Aufbau",
-      labels: ["Gym"],
+      weekAmount: "Oberkörper + 2-3 km locker",
+      labels: ["Gym", "Jogging"],
       strengthPlanId: "gym-b"
     },
     6: {
       category: "Jogging",
       title: "Langer Lauf",
-      amount: "3 km",
+      amount: "4 km",
       intensity: "Locker",
       explanation: "Nicht Vollgas. Du sollst sauber durchlaufen.",
       status: "Pflicht",
       optional: "+0.5 km pro Woche nur, wenn es sich gut anfühlt",
       weekTitle: "Langer Lauf",
-      weekAmount: "3 km",
+      weekAmount: "4 km",
       labels: ["Jogging"]
     },
     0: {
       category: "Gym",
       title: "Gym C optional",
-      amount: "Oberkörper + Core",
+      amount: "Leichtes Techniktraining",
       intensity: "Locker bis mittel",
       explanation: "Nur machen, wenn Beine und Energie nach dem langen Lauf gut sind.",
       status: "Optional",
-      optional: "Sonst Spaziergang oder lockeres Dehnen",
+      optional: "Alternativ 2 km sehr locker oder Spaziergang",
       weekTitle: "Gym C optional",
-      weekAmount: "Oberkörper + Core",
+      weekAmount: "leichtes Gym oder sehr lockerer Lauf",
       labels: ["Gym", "Optional"],
       strengthPlanId: "gym-c"
     }
@@ -251,15 +251,15 @@ const strengthPlansByProfile = {
       id: "gym-b",
       dayLabel: "Fr",
       title: "Gym B",
-      subtitle: "Ganzkörper Aufbau",
-      warmup: "8-10 Minuten locker + erste Übung mit wenig Gewicht testen",
+      subtitle: "Oberkörper, Arme, Schultern",
+      warmup: "5-8 Minuten locker + Schultern und Ellenbogen mobilisieren",
       exercises: [
-        ["hack-squat", "Hack Squat oder Beinpresse", "3 x 8-10", "Nicht zu schwer starten, Knie stabil halten, volle Kontrolle."],
-        ["leg-curl", "Beinbeuger Maschine", "3 x 10-12", "Langsam ziehen, oben kurz halten, nicht mit Schwung arbeiten."],
         ["incline-press", "Schrägbank-Brustpresse", "3 x 10-12", "Fokus auf saubere Bahn, Schultern unten halten."],
         ["cable-row", "Kabelrudern", "3 x 10-12", "Brust aufrecht, Ellbogen nah am Körper ziehen."],
-        ["shoulder-press", "Schulterdrücken Maschine", "2 x 10-12", "Kontrolliert drücken, nicht ins Hohlkreuz fallen."],
-        ["dead-bug", "Dead Bug", "3 x 8 pro Seite", "Langsam arbeiten, unteren Rücken ruhig am Boden halten."]
+        ["shoulder-press", "Schulterdrücken Maschine", "3 x 10-12", "Kontrolliert drücken, nicht ins Hohlkreuz fallen."],
+        ["lateral-raise", "Seitheben Maschine oder Kurzhanteln", "2 x 12-15", "Arme leicht gebeugt, nicht hochschwingen."],
+        ["triceps-pushdown", "Trizepsdrücken am Kabel", "2 x 12-15", "Ellbogen eng am Körper halten, unten kurz anspannen."],
+        ["biceps-curl", "Bizeps-Curl Maschine oder Kabel", "2 x 12-15", "Langsam curlen, nicht mit dem Oberkörper schwingen."]
       ]
     },
     "gym-c": {
@@ -1158,7 +1158,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=7").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=8").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 

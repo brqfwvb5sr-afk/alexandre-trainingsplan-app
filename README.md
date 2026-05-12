@@ -32,9 +32,9 @@ Für die Strava-Integration muss diese Vercel-Version verwendet werden. Die GitH
 Ale ist 16 Jahre alt und trainiert für Muskelaufbau und bessere Ausdauer. Der Plan berücksichtigt:
 
 - aktuelles Laufniveau von ca. 2 km
-- Unihockey-Training am Dienstag
-- Anfänger-Gym-Plan mit zwei festen Ganzkörper-Einheiten und einer optionalen Zusatz-Einheit
-- weiterhin lockere Läufe, langer Lauf und kontrollierte Steigerung
+- Dienstag als Regenerationstag mit höchstens kurzem lockerem Lauf
+- Anfänger-Gym-Plan mit Ganzkörper-Technik, Oberkörper/Arme/Schultern und einer optionalen Zusatz-Einheit
+- mehrere lockere Läufe, langer Lauf und kontrollierte Steigerung
 - Hinweise zu Protein, Kreatin, Schlaf und Regeneration
 
 ### Nevio
