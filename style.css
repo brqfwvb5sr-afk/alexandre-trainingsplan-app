@@ -625,6 +625,18 @@ input::placeholder {
   border-color: transparent;
 }
 
+.plan-label.is-gym {
+  color: #061018;
+  background: linear-gradient(135deg, var(--green), var(--cyan));
+  border-color: transparent;
+}
+
+.plan-label.is-unihockey {
+  color: #061018;
+  background: var(--blue);
+  border-color: transparent;
+}
+
 .plan-label.is-pause {
   color: #061018;
   background: var(--amber);

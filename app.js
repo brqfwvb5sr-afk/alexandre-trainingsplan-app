@@ -2,12 +2,17 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 6";
+const APP_VERSION = "Version 7";
 const STRAVA_API_BASE = "/api/strava";
 
 const profiles = {
   ale: { label: "Ale", hasStrength: true, hasStrava: true },
   nevio: { label: "Nevio", hasStrength: true, hasStrava: false }
+};
+
+const weeklyTargets = {
+  ale: 6,
+  nevio: 5
 };
 
 const weekdays = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
@@ -33,25 +38,25 @@ const planByProfile = {
       title: "Unihockey-Training",
       amount: "Vereinstraining",
       intensity: "Mittel bis hoch",
-      explanation: "Kein Krafttraining. Schule und Regeneration gehen vor.",
+      explanation: "Heute kein Gym. Unihockey ist genug Belastung.",
       status: "Pflicht",
       optional: "1.5-2 km sehr locker, nur wenn genug Energie da ist",
       weekTitle: "Unihockey",
-      weekAmount: "kein Krafttraining",
-      labels: ["Pause", "Optional"]
+      weekAmount: "kein Gym",
+      labels: ["Unihockey", "Kein Gym"]
     },
     3: {
-      category: "Kraft",
-      title: "Kraft B",
-      amount: "Beine + Core",
-      intensity: "Kontrolliert",
-      explanation: "Saubere Wiederholungen sind wichtiger als Tempo.",
+      category: "Gym",
+      title: "Gym A",
+      amount: "Ganzkörper Technik",
+      intensity: "Mittel",
+      explanation: "Maschinen kontrolliert führen. Nicht bis komplett ans Limit.",
       status: "Pflicht",
-      optional: "1.5-2 km lockerer Lauf, nur wenn du dich fit fühlst",
-      weekTitle: "Kraft B",
-      weekAmount: "Beine + Core",
-      labels: ["Kraft", "Optional"],
-      strengthPlanId: "b"
+      optional: "5-10 Minuten Mobility oder lockeres Auslaufen",
+      weekTitle: "Gym A",
+      weekAmount: "Ganzkörper Technik",
+      labels: ["Gym"],
+      strengthPlanId: "gym-a"
     },
     4: {
       category: "Jogging",
@@ -66,16 +71,17 @@ const planByProfile = {
       labels: ["Jogging", "Optional"]
     },
     5: {
-      category: "Pause",
-      title: "Pause",
-      amount: "Keine Einheit",
-      intensity: "Sehr locker",
-      explanation: "Heute erholen. Regeneration ist Teil des Plans.",
+      category: "Gym",
+      title: "Gym B",
+      amount: "Ganzkörper Aufbau",
+      intensity: "Mittel",
+      explanation: "Saubere Wiederholungen, Gewicht erst steigern wenn die Technik passt.",
       status: "Pflicht",
-      optional: "Stepper 15-20 Minuten sehr locker",
-      weekTitle: "Pause",
-      weekAmount: "Regeneration",
-      labels: ["Pause", "Optional"]
+      optional: "Nach dem Training locker dehnen",
+      weekTitle: "Gym B",
+      weekAmount: "Ganzkörper Aufbau",
+      labels: ["Gym"],
+      strengthPlanId: "gym-b"
     },
     6: {
       category: "Jogging",
@@ -90,17 +96,17 @@ const planByProfile = {
       labels: ["Jogging"]
     },
     0: {
-      category: "Kraft",
-      title: "Kraft B",
-      amount: "Beine + Core",
-      intensity: "Kontrolliert",
-      explanation: "Langsam und stabil arbeiten.",
-      status: "Pflicht",
-      optional: "Spaziergang oder Stepper locker",
-      weekTitle: "Kraft B",
-      weekAmount: "Beine + Core",
-      labels: ["Kraft", "Optional"],
-      strengthPlanId: "b"
+      category: "Gym",
+      title: "Gym C optional",
+      amount: "Oberkörper + Core",
+      intensity: "Locker bis mittel",
+      explanation: "Nur machen, wenn Beine und Energie nach dem langen Lauf gut sind.",
+      status: "Optional",
+      optional: "Sonst Spaziergang oder lockeres Dehnen",
+      weekTitle: "Gym C optional",
+      weekAmount: "Oberkörper + Core",
+      labels: ["Gym", "Optional"],
+      strengthPlanId: "gym-c"
     }
   },
   nevio: {
@@ -227,28 +233,48 @@ const joggingCards = [
 
 const strengthPlansByProfile = {
   ale: {
-    a: {
-      id: "a",
-      title: "Kraft A",
-      subtitle: "Oberkörper + Core",
+    "gym-a": {
+      id: "gym-a",
+      dayLabel: "Mi",
+      title: "Gym A",
+      subtitle: "Ganzkörper Technik",
+      warmup: "8-10 Minuten Laufband oder Bike locker + 2 leichte Aufwärmsätze",
       exercises: [
-        ["pushups", "Liegestütze", "3 x max sauber", "Körper gerade halten, nicht ins Hohlkreuz fallen."],
-        ["row", "Rudern mit 10 kg", "3 x 10-12 pro Seite", "Rücken gerade, Ellbogen eng am Körper ziehen."],
-        ["press", "Schulterdrücken mit 3 kg", "3 x 12-15", "Kontrolliert drücken, Schultern nicht hochziehen."],
-        ["curls", "Bizeps-Curls mit 3 kg", "3 x 15-20", "Ellbogen ruhig halten, nicht schwingen."],
-        ["plank", "Plank", "3 x 45-60 Sekunden", "Bauch anspannen, Rücken gerade."]
+        ["leg-press", "Beinpresse", "3 x 10-12", "Füße stabil, Knie folgen den Zehen, kontrolliert tief gehen."],
+        ["chest-press", "Brustpresse Maschine", "3 x 10-12", "Schulterblätter hinten halten, langsam ablassen, sauber drücken."],
+        ["lat-pulldown", "Latziehen am Kabel", "3 x 10-12", "Brust leicht raus, Stange kontrolliert zur oberen Brust ziehen."],
+        ["seated-row", "Sitzendes Rudern", "2-3 x 10-12", "Rücken gerade, Schulterblätter bewusst nach hinten ziehen."],
+        ["plank", "Plank", "3 x 30-45 Sekunden", "Bauch anspannen, Rücken gerade, ruhig atmen."]
       ]
     },
-    b: {
-      id: "b",
-      title: "Kraft B",
-      subtitle: "Beine + Core",
+    "gym-b": {
+      id: "gym-b",
+      dayLabel: "Fr",
+      title: "Gym B",
+      subtitle: "Ganzkörper Aufbau",
+      warmup: "8-10 Minuten locker + erste Übung mit wenig Gewicht testen",
       exercises: [
-        ["squats", "Kniebeugen", "4 x 15-25", "Knie stabil, Rücken gerade, tief aber kontrolliert."],
-        ["lunges", "Ausfallschritte", "3 x 10 pro Bein", "Langsam und kontrolliert, Knie nicht nach innen kippen."],
-        ["calves", "Wadenheben", "3 x 20", "Oben kurz halten, langsam senken."],
-        ["legraises", "Beinheben", "3 x 12-15", "Bauch anspannen, nicht mit Schwung arbeiten."],
-        ["sideplank", "Seitstütz", "2 x 30-45 Sekunden pro Seite", "Hüfte oben halten, Körper gerade."]
+        ["hack-squat", "Hack Squat oder Beinpresse", "3 x 8-10", "Nicht zu schwer starten, Knie stabil halten, volle Kontrolle."],
+        ["leg-curl", "Beinbeuger Maschine", "3 x 10-12", "Langsam ziehen, oben kurz halten, nicht mit Schwung arbeiten."],
+        ["incline-press", "Schrägbank-Brustpresse", "3 x 10-12", "Fokus auf saubere Bahn, Schultern unten halten."],
+        ["cable-row", "Kabelrudern", "3 x 10-12", "Brust aufrecht, Ellbogen nah am Körper ziehen."],
+        ["shoulder-press", "Schulterdrücken Maschine", "2 x 10-12", "Kontrolliert drücken, nicht ins Hohlkreuz fallen."],
+        ["dead-bug", "Dead Bug", "3 x 8 pro Seite", "Langsam arbeiten, unteren Rücken ruhig am Boden halten."]
+      ]
+    },
+    "gym-c": {
+      id: "gym-c",
+      dayLabel: "So",
+      title: "Gym C optional",
+      subtitle: "Oberkörper + Core leicht",
+      warmup: "5-8 Minuten locker + Schultern mobilisieren",
+      exercises: [
+        ["assisted-pullup", "Assisted Pull-Up oder Latziehen", "3 x 8-12", "Nur so schwer wählen, dass jede Wiederholung sauber bleibt."],
+        ["chest-supported-row", "Brustgestütztes Rudern", "3 x 10-12", "Oberkörper ruhig halten, nicht reißen."],
+        ["cable-fly", "Cable Fly oder Butterfly Maschine", "2 x 12-15", "Leichtes Gewicht, Brust kontrolliert anspannen."],
+        ["lateral-raise", "Seitheben Maschine oder Kurzhanteln", "2 x 12-15", "Arme leicht gebeugt, nicht hochschwingen."],
+        ["face-pull", "Face Pulls am Kabel", "2 x 12-15", "Ellbogen hoch, Schulterblätter sauber nach hinten ziehen."],
+        ["cable-crunch", "Cable Crunch oder Crunch Maschine", "3 x 10-12", "Bauch arbeitet, nicht am Nacken ziehen."]
       ]
     }
   },
@@ -613,8 +639,15 @@ function renderStrength() {
         <h1>Krafttraining ${escapeHtml(profileLabel)}</h1>
         <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
       </div>
-      <p>Wähle deinen heutigen Plan.</p>
+      <p>${currentProfile === "ale" ? "Gym-Plan für Anfänger: sauber trainieren, langsam steigern." : "Wähle deinen heutigen Plan."}</p>
     </div>
+
+    ${currentProfile === "ale" ? `
+      <article class="optional-card">
+        <p class="card-kicker">Regel</p>
+        <h3>Erst Technik, dann Gewicht. Wenn alle Sätze sauber gehen, nächstes Mal leicht steigern.</h3>
+      </article>
+    ` : ""}
 
     <div class="strength-choice-grid">
       ${planList.map((plan) => `
@@ -681,7 +714,8 @@ function renderExerciseList(plan) {
 function renderProgress() {
   const doneDays = weekIndexes.filter((dayIndex) => isDayDone(currentProfile, dayIndex));
   const count = doneDays.length;
-  const percent = Math.min(100, Math.round((count / 5) * 100));
+  const target = weeklyTargets[currentProfile] || 5;
+  const percent = Math.min(100, Math.round((count / target) * 100));
 
   progressContent.innerHTML = `
     <div class="page-heading">
@@ -694,7 +728,7 @@ function renderProgress() {
     <article class="progress-card">
       <div class="progress-topline">
         <span>Diese Woche erledigt</span>
-        <strong>${count} / 5</strong>
+        <strong>${count} / ${target}</strong>
       </div>
       <div class="progress-bar" aria-label="Fortschritt ${percent} Prozent">
         <span style="width: ${percent}%"></span>
@@ -1124,7 +1158,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=6").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=7").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 

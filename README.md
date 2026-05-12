@@ -33,7 +33,8 @@ Ale ist 16 Jahre alt und trainiert für Muskelaufbau und bessere Ausdauer. Der P
 
 - aktuelles Laufniveau von ca. 2 km
 - Unihockey-Training am Dienstag
-- 10-kg-Kurzhantel, zwei 3-kg-Kurzhanteln und Stepper zu Hause
+- Anfänger-Gym-Plan mit zwei festen Ganzkörper-Einheiten und einer optionalen Zusatz-Einheit
+- weiterhin lockere Läufe, langer Lauf und kontrollierte Steigerung
 - Hinweise zu Protein, Kreatin, Schlaf und Regeneration
 
 ### Nevio
