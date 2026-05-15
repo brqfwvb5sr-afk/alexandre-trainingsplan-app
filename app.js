@@ -2,7 +2,7 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 8";
+const APP_VERSION = "Version 9";
 const STRAVA_API_BASE = "/api/strava";
 
 const profiles = {
@@ -11,7 +11,7 @@ const profiles = {
 };
 
 const weeklyTargets = {
-  ale: 6,
+  ale: 5,
   nevio: 5
 };
 
@@ -22,16 +22,18 @@ const weekIndexes = [1, 2, 3, 4, 5, 6, 0];
 const planByProfile = {
   ale: {
     1: {
-      category: "Jogging",
-      title: "Lockerer Lauf",
-      amount: "3 km",
-      intensity: "Locker",
-      explanation: "Du solltest noch reden können.",
+      category: "Gym + Jogging",
+      title: "Push + Core",
+      amount: "Brust, Schultern, Trizeps + 2-3 km locker",
+      intensity: "Mittel",
+      explanation: "Erst sauber im Gym drücken, danach nur locker laufen.",
       status: "Pflicht",
-      optional: "10 Minuten Dehnen",
-      weekTitle: "Jogging locker",
-      weekAmount: "3 km",
-      labels: ["Jogging"]
+      optional: "Lauf nach dem Gym kürzen, wenn du müde bist",
+      weekTitle: "Push + Core",
+      weekAmount: "Brust, Schultern, Trizeps + lockerer Lauf",
+      labels: ["Gym", "Jogging"],
+      strengthPlanId: "ale-push",
+      runMinKm: 2
     },
     2: {
       category: "Regeneration",
@@ -39,74 +41,77 @@ const planByProfile = {
       amount: "Kein Gym",
       intensity: "Sehr locker",
       explanation: "Heute bewusst rausnehmen. Wenn laufen, dann nur locker und kurz.",
-      status: "Pflicht",
-      optional: "1.5-2 km sehr locker, nur wenn du dich gut fühlst",
+      status: "Optional",
+      optional: "1.5-2 km sehr locker oder Spaziergang",
       weekTitle: "Regeneration",
       weekAmount: "kein Gym, höchstens 1.5-2 km locker",
       labels: ["Pause", "Optional"]
     },
     3: {
-      category: "Gym",
-      title: "Gym A",
-      amount: "Ganzkörper Technik",
+      category: "Gym + Jogging",
+      title: "Pull + Bizeps",
+      amount: "Rücken, hintere Schulter, Bizeps + 2-3 km locker",
       intensity: "Mittel",
-      explanation: "Maschinen kontrolliert führen. Nicht bis komplett ans Limit.",
+      explanation: "Zieh sauber aus dem Rücken. Danach kann ein lockerer Lauf dran.",
       status: "Pflicht",
-      optional: "Optional 1.5-2 km locker, wenn die Beine frisch sind",
-      weekTitle: "Gym A",
-      weekAmount: "Ganzkörper Technik + optional lockerer Lauf",
-      labels: ["Gym", "Optional"],
-      strengthPlanId: "gym-a"
+      optional: "Lauf nur locker, kein Intervall",
+      weekTitle: "Pull + Bizeps",
+      weekAmount: "Rücken, Bizeps + lockerer Lauf",
+      labels: ["Gym", "Jogging"],
+      strengthPlanId: "ale-pull",
+      runMinKm: 2
     },
     4: {
-      category: "Jogging",
-      title: "Lockerer Lauf",
-      amount: "3-3.5 km",
-      intensity: "Locker",
-      explanation: "Ruhig laufen, gleichmäßig atmen.",
+      category: "Gym",
+      title: "Beine + Core",
+      amount: "Beine, Bauch, unterer Rücken",
+      intensity: "Mittel bis schwer",
+      explanation: "Heute Beine. Kein harter Lauf danach.",
       status: "Pflicht",
-      optional: "4 x 15 Sekunden etwas schneller, nur wenn es locker bleibt",
-      weekTitle: "Jogging locker",
-      weekAmount: "3-3.5 km",
-      labels: ["Jogging", "Optional"]
+      optional: "10-15 Minuten Laufband sehr locker zum Warmmachen",
+      weekTitle: "Beine + Core",
+      weekAmount: "Beine, Bauch, unterer Rücken",
+      labels: ["Gym"],
+      strengthPlanId: "ale-legs"
     },
     5: {
-      category: "Gym + Jogging",
-      title: "Gym B",
-      amount: "Oberkörper + 2-3 km locker",
-      intensity: "Mittel",
-      explanation: "Arme, Schultern und Rücken belasten die Beine kaum. Danach locker laufen.",
+      category: "Jogging",
+      title: "Lockerer Lauf",
+      amount: "3.5-4 km",
+      intensity: "Locker",
+      explanation: "Kein Gym. Einfach ruhig laufen und frisch bleiben.",
       status: "Pflicht",
-      optional: "Wenn du müde bist: Lauf auf 1.5-2 km kürzen",
-      weekTitle: "Gym B",
-      weekAmount: "Oberkörper + 2-3 km locker",
-      labels: ["Gym", "Jogging"],
-      strengthPlanId: "gym-b"
+      optional: "Wenn die Beine schwer sind: 2.5-3 km reichen",
+      weekTitle: "Jogging locker",
+      weekAmount: "3.5-4 km, kein Gym",
+      labels: ["Jogging"],
+      runMinKm: 3.5
     },
     6: {
-      category: "Jogging",
-      title: "Langer Lauf",
-      amount: "4 km",
-      intensity: "Locker",
-      explanation: "Nicht Vollgas. Du sollst sauber durchlaufen.",
+      category: "Gym + Jogging",
+      title: "Ganzkörper + Arme",
+      amount: "Ganzkörper Maschinen + 3-4 km Laufband",
+      intensity: "Mittel",
+      explanation: "Alles kontrolliert. Am Ende locker aufs Laufband, nicht sprinten.",
       status: "Pflicht",
-      optional: "+0.5 km pro Woche nur, wenn es sich gut anfühlt",
-      weekTitle: "Langer Lauf",
-      weekAmount: "4 km",
-      labels: ["Jogging"]
+      optional: "Laufband auf 3-4 km begrenzen, wenn du müde wirst",
+      weekTitle: "Ganzkörper + Arme",
+      weekAmount: "Gym + Laufband 3-4 km",
+      labels: ["Gym", "Jogging"],
+      strengthPlanId: "ale-full",
+      runMinKm: 3
     },
     0: {
-      category: "Gym",
-      title: "Gym C optional",
-      amount: "Leichtes Techniktraining",
-      intensity: "Locker bis mittel",
-      explanation: "Nur machen, wenn Beine und Energie nach dem langen Lauf gut sind.",
+      category: "Regeneration",
+      title: "Regeneration",
+      amount: "Kein Gym",
+      intensity: "Sehr locker",
+      explanation: "Heute erholen. Der Körper baut in der Pause auf.",
       status: "Optional",
-      optional: "Alternativ 2 km sehr locker oder Spaziergang",
-      weekTitle: "Gym C optional",
-      weekAmount: "leichtes Gym oder sehr lockerer Lauf",
-      labels: ["Gym", "Optional"],
-      strengthPlanId: "gym-c"
+      optional: "Spaziergang, Dehnen oder Mobility",
+      weekTitle: "Regeneration",
+      weekAmount: "kein Gym",
+      labels: ["Pause", "Optional"]
     }
   },
   nevio: {
@@ -233,48 +238,65 @@ const joggingCards = [
 
 const strengthPlansByProfile = {
   ale: {
-    "gym-a": {
-      id: "gym-a",
-      dayLabel: "Mi",
-      title: "Gym A",
-      subtitle: "Ganzkörper Technik",
-      warmup: "8-10 Minuten Laufband oder Bike locker + 2 leichte Aufwärmsätze",
+    "ale-push": {
+      id: "ale-push",
+      dayLabel: "Mo",
+      title: "Push + Core",
+      subtitle: "Brust, Schultern, Trizeps",
+      warmup: "8 Minuten Laufband locker + 2 leichte Aufwärmsätze Brustpresse",
       exercises: [
-        ["leg-press", "Beinpresse", "3 x 10-12", "Füße stabil, Knie folgen den Zehen, kontrolliert tief gehen."],
         ["chest-press", "Brustpresse Maschine", "3 x 10-12", "Schulterblätter hinten halten, langsam ablassen, sauber drücken."],
-        ["lat-pulldown", "Latziehen am Kabel", "3 x 10-12", "Brust leicht raus, Stange kontrolliert zur oberen Brust ziehen."],
-        ["seated-row", "Sitzendes Rudern", "2-3 x 10-12", "Rücken gerade, Schulterblätter bewusst nach hinten ziehen."],
-        ["plank", "Plank", "3 x 30-45 Sekunden", "Bauch anspannen, Rücken gerade, ruhig atmen."]
+        ["incline-press", "Schrägbank-Brustpresse", "3 x 10-12", "Obere Brust treffen, kontrolliert drücken, Schultern unten halten."],
+        ["shoulder-press", "Schulterdrücken Maschine", "3 x 10-12", "Bauch anspannen, nicht ins Hohlkreuz fallen."],
+        ["lateral-raise", "Seitheben Maschine oder Kurzhanteln", "3 x 12-15", "Leichtes Gewicht, Arme nicht hochschwingen."],
+        ["triceps-pushdown", "Trizepsdrücken am Kabel", "3 x 12-15", "Ellbogen eng am Körper halten, unten kurz anspannen."],
+        ["plank", "Plank", "3 x 40-60 Sekunden", "Körper gerade, Bauch fest, ruhig atmen."]
       ]
     },
-    "gym-b": {
-      id: "gym-b",
-      dayLabel: "Fr",
-      title: "Gym B",
-      subtitle: "Oberkörper, Arme, Schultern",
-      warmup: "5-8 Minuten locker + Schultern und Ellenbogen mobilisieren",
+    "ale-pull": {
+      id: "ale-pull",
+      dayLabel: "Mi",
+      title: "Pull + Bizeps",
+      subtitle: "Rücken, hintere Schulter, Bizeps",
+      warmup: "8 Minuten locker + 2 leichte Sätze Latziehen",
       exercises: [
-        ["incline-press", "Schrägbank-Brustpresse", "3 x 10-12", "Fokus auf saubere Bahn, Schultern unten halten."],
-        ["cable-row", "Kabelrudern", "3 x 10-12", "Brust aufrecht, Ellbogen nah am Körper ziehen."],
-        ["shoulder-press", "Schulterdrücken Maschine", "3 x 10-12", "Kontrolliert drücken, nicht ins Hohlkreuz fallen."],
-        ["lateral-raise", "Seitheben Maschine oder Kurzhanteln", "2 x 12-15", "Arme leicht gebeugt, nicht hochschwingen."],
-        ["triceps-pushdown", "Trizepsdrücken am Kabel", "2 x 12-15", "Ellbogen eng am Körper halten, unten kurz anspannen."],
-        ["biceps-curl", "Bizeps-Curl Maschine oder Kabel", "2 x 12-15", "Langsam curlen, nicht mit dem Oberkörper schwingen."]
+        ["lat-pulldown", "Latziehen am Kabel", "3 x 10-12", "Brust leicht raus, kontrolliert zur oberen Brust ziehen."],
+        ["seated-row", "Sitzendes Rudern", "3 x 10-12", "Rücken gerade, Schulterblätter aktiv nach hinten ziehen."],
+        ["plate-row", "Plate Loaded Rudern niedrig", "3 x 10-12", "Nicht reißen, Ellbogen nah am Körper führen."],
+        ["reverse-fly", "Reverse Butterfly", "2-3 x 12-15", "Hintere Schulter treffen, Arme kontrolliert öffnen."],
+        ["biceps-machine", "Bizeps-Curl Maschine", "3 x 10-12", "Ellbogen stabil, langsam hoch und runter."],
+        ["hammer-curls", "Hammer Curls", "2 x 12", "Handflächen zueinander, Oberkörper ruhig halten."]
       ]
     },
-    "gym-c": {
-      id: "gym-c",
-      dayLabel: "So",
-      title: "Gym C optional",
-      subtitle: "Oberkörper + Core leicht",
-      warmup: "5-8 Minuten locker + Schultern mobilisieren",
+    "ale-legs": {
+      id: "ale-legs",
+      dayLabel: "Do",
+      title: "Beine + Core",
+      subtitle: "Beine, Bauch, unterer Rücken",
+      warmup: "10 Minuten Laufband sehr locker + 2 leichte Sätze Beinpresse",
       exercises: [
-        ["assisted-pullup", "Assisted Pull-Up oder Latziehen", "3 x 8-12", "Nur so schwer wählen, dass jede Wiederholung sauber bleibt."],
-        ["chest-supported-row", "Brustgestütztes Rudern", "3 x 10-12", "Oberkörper ruhig halten, nicht reißen."],
-        ["cable-fly", "Cable Fly oder Butterfly Maschine", "2 x 12-15", "Leichtes Gewicht, Brust kontrolliert anspannen."],
-        ["lateral-raise", "Seitheben Maschine oder Kurzhanteln", "2 x 12-15", "Arme leicht gebeugt, nicht hochschwingen."],
-        ["face-pull", "Face Pulls am Kabel", "2 x 12-15", "Ellbogen hoch, Schulterblätter sauber nach hinten ziehen."],
-        ["cable-crunch", "Cable Crunch oder Crunch Maschine", "3 x 10-12", "Bauch arbeitet, nicht am Nacken ziehen."]
+        ["leg-press", "Beinpresse", "4 x 10-12", "Füße stabil, Knie folgen den Zehen, kontrolliert tief gehen."],
+        ["leg-extension", "Leg Extension", "3 x 12", "Oben kurz halten, langsam ablassen."],
+        ["leg-curl", "Leg Curl", "3 x 12", "Kontrolliert ziehen, nicht mit Schwung arbeiten."],
+        ["calf-press", "Waden an Beinpresse", "3 x 15-20", "Volle Bewegung, oben kurz halten, langsam senken."],
+        ["hyperextensions", "Hyperextensions", "3 x 12", "Rücken kontrolliert strecken, nicht überstrecken."],
+        ["leg-raises", "Leg Raises", "3 x 10-12", "Bauch anspannen, Beine kontrolliert heben."]
+      ]
+    },
+    "ale-full": {
+      id: "ale-full",
+      dayLabel: "Sa",
+      title: "Ganzkörper + Arme",
+      subtitle: "Ganzkörper, Arme, Laufband",
+      warmup: "8 Minuten Laufband locker + Gelenke kurz mobilisieren",
+      exercises: [
+        ["hack-squat", "Hack Squat oder Beinpresse leicht", "3 x 10", "Nur moderat, weil Donnerstag schon Beine war."],
+        ["assisted-pullup", "Assisted Pull-Up oder Latziehen", "3 x 8-12", "Sauber ziehen, nicht mit Schwung arbeiten."],
+        ["machine-chest", "Brustpresse oder Butterfly", "3 x 10-12", "Kontrollierte Wiederholungen, Brust bewusst anspannen."],
+        ["cable-row", "Kabelrudern", "3 x 10-12", "Brust aufrecht, Schulterblätter nach hinten ziehen."],
+        ["triceps-overhead", "Überkopf Trizeps am Kabel", "2 x 12-15", "Ellbogen ruhig halten, kontrolliert strecken."],
+        ["preacher-curl", "Bizeps-Curl Maschine", "2 x 12-15", "Langsam curlen, nicht reißen."],
+        ["treadmill", "Laufband locker", "20-30 Minuten", "Ruhiges Tempo, du solltest noch reden können."]
       ]
     }
   },
@@ -629,6 +651,7 @@ function renderStrength() {
   }
 
   const profileLabel = profiles[currentProfile].label;
+  const strengthTitle = currentProfile === "ale" ? "Gym-Plan Ale" : `Krafttraining ${profileLabel}`;
   if (!selectedStrengthPlan || !plans[selectedStrengthPlan]) {
     selectedStrengthPlan = null;
   }
@@ -636,16 +659,16 @@ function renderStrength() {
   strengthContent.innerHTML = `
     <div class="page-heading">
       <div class="page-topline">
-        <h1>Krafttraining ${escapeHtml(profileLabel)}</h1>
+        <h1>${escapeHtml(strengthTitle)}</h1>
         <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
       </div>
-      <p>${currentProfile === "ale" ? "Gym-Plan für Anfänger: sauber trainieren, langsam steigern." : "Wähle deinen heutigen Plan."}</p>
+      <p>${currentProfile === "ale" ? "Mo, Mi, Do und Sa ins Gym. Di, Fr und So kein Gym." : "Wähle deinen heutigen Plan."}</p>
     </div>
 
     ${currentProfile === "ale" ? `
       <article class="optional-card">
         <p class="card-kicker">Regel</p>
-        <h3>Erst Technik, dann Gewicht. Wenn alle Sätze sauber gehen, nächstes Mal leicht steigern.</h3>
+        <h3>Erst Technik, dann Gewicht. Jede Übung mit 1-2 Wiederholungen Reserve beenden.</h3>
       </article>
     ` : ""}
 
@@ -1034,7 +1057,8 @@ function isPlannedJoggingDay(profile, dayIndex) {
 }
 
 function runMeetsPlannedDistance(profile, dayIndex, distanceKm) {
-  const minDistance = extractMinimumDistance(planByProfile[profile]?.[dayIndex]?.amount || "");
+  const plan = planByProfile[profile]?.[dayIndex] || {};
+  const minDistance = plan.runMinKm || extractMinimumDistance(plan.amount || "");
   if (!minDistance) return true;
   return Number(distanceKm) >= minDistance * 0.85;
 }
@@ -1158,7 +1182,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=8").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=9").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 

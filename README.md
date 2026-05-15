@@ -33,8 +33,9 @@ Ale ist 16 Jahre alt und trainiert für Muskelaufbau und bessere Ausdauer. Der P
 
 - aktuelles Laufniveau von ca. 2 km
 - Dienstag als Regenerationstag mit höchstens kurzem lockerem Lauf
-- Anfänger-Gym-Plan mit Ganzkörper-Technik, Oberkörper/Arme/Schultern und einer optionalen Zusatz-Einheit
-- mehrere lockere Läufe, langer Lauf und kontrollierte Steigerung
+- Gym an Montag, Mittwoch, Donnerstag und Samstag
+- Split aus Push, Pull, Beine/Core und Ganzkörper/Arme
+- lockere Läufe nach Oberkörper-Tagen und ein separater Lauf am Freitag
 - Hinweise zu Protein, Kreatin, Schlaf und Regeneration
 
 ### Nevio
