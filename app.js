@@ -2,12 +2,11 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 9";
-const STRAVA_API_BASE = "/api/strava";
+const APP_VERSION = "Version 10";
 
 const profiles = {
-  ale: { label: "Ale", hasStrength: true, hasStrava: true },
-  nevio: { label: "Nevio", hasStrength: true, hasStrava: false }
+  ale: { label: "Ale", hasStrength: true },
+  nevio: { label: "Nevio", hasStrength: true }
 };
 
 const weeklyTargets = {
@@ -23,52 +22,50 @@ const planByProfile = {
   ale: {
     1: {
       category: "Gym + Jogging",
-      title: "Push + Core",
-      amount: "Brust, Schultern, Trizeps + 2-3 km locker",
+      title: "Push Fokus",
+      amount: "Brust, Schultern, Trizeps + 15-20 Min locker",
       intensity: "Mittel",
-      explanation: "Erst sauber im Gym drücken, danach nur locker laufen.",
+      explanation: "Oberkörper breit machen: Brust und Schultern sauber trainieren, danach nur locker bewegen.",
       status: "Pflicht",
-      optional: "Lauf nach dem Gym kürzen, wenn du müde bist",
-      weekTitle: "Push + Core",
-      weekAmount: "Brust, Schultern, Trizeps + lockerer Lauf",
+      optional: "10 Minuten Mobility, wenn Schulter oder Ellenbogen ziehen",
+      weekTitle: "Push Fokus",
+      weekAmount: "Brust, Schultern, Trizeps + 15-20 Min locker",
       labels: ["Gym", "Jogging"],
-      strengthPlanId: "ale-push",
-      runMinKm: 2
+      strengthPlanId: "ale-push"
     },
     2: {
       category: "Regeneration",
       title: "Regeneration",
       amount: "Kein Gym",
       intensity: "Sehr locker",
-      explanation: "Heute bewusst rausnehmen. Wenn laufen, dann nur locker und kurz.",
+      explanation: "Heute wächst du nicht durch mehr Training, sondern durch Erholung.",
       status: "Optional",
-      optional: "1.5-2 km sehr locker oder Spaziergang",
+      optional: "20-40 Minuten Spaziergang oder 10 Minuten Dehnen",
       weekTitle: "Regeneration",
-      weekAmount: "kein Gym, höchstens 1.5-2 km locker",
+      weekAmount: "kein Gym, lockere Schritte",
       labels: ["Pause", "Optional"]
     },
     3: {
       category: "Gym + Jogging",
-      title: "Pull + Bizeps",
-      amount: "Rücken, hintere Schulter, Bizeps + 2-3 km locker",
+      title: "Pull Fokus",
+      amount: "Rücken, hintere Schulter, Bizeps + 15-20 Min locker",
       intensity: "Mittel",
-      explanation: "Zieh sauber aus dem Rücken. Danach kann ein lockerer Lauf dran.",
+      explanation: "Rückenbreite und Haltung. Danach locker laufen, keine Intervalle.",
       status: "Pflicht",
-      optional: "Lauf nur locker, kein Intervall",
-      weekTitle: "Pull + Bizeps",
-      weekAmount: "Rücken, Bizeps + lockerer Lauf",
+      optional: "2 Sätze Face Pulls extra, wenn du dich gut fühlst",
+      weekTitle: "Pull Fokus",
+      weekAmount: "Rücken, hintere Schulter, Bizeps + locker laufen",
       labels: ["Gym", "Jogging"],
-      strengthPlanId: "ale-pull",
-      runMinKm: 2
+      strengthPlanId: "ale-pull"
     },
     4: {
       category: "Gym",
       title: "Beine + Core",
       amount: "Beine, Bauch, unterer Rücken",
-      intensity: "Mittel bis schwer",
-      explanation: "Heute Beine. Kein harter Lauf danach.",
+      intensity: "Mittel",
+      explanation: "Nicht auslassen: starke Beine und Core lassen den Körper insgesamt athletischer wirken.",
       status: "Pflicht",
-      optional: "10-15 Minuten Laufband sehr locker zum Warmmachen",
+      optional: "Nur 10 Minuten sehr locker warmmachen, kein harter Lauf danach",
       weekTitle: "Beine + Core",
       weekAmount: "Beine, Bauch, unterer Rücken",
       labels: ["Gym"],
@@ -77,41 +74,40 @@ const planByProfile = {
     5: {
       category: "Jogging",
       title: "Lockerer Lauf",
-      amount: "3.5-4 km",
+      amount: "3-4 km",
       intensity: "Locker",
-      explanation: "Kein Gym. Einfach ruhig laufen und frisch bleiben.",
+      explanation: "Kein Gym. Fettverbrennung und Ausdauer, aber nicht Vollgas.",
       status: "Pflicht",
-      optional: "Wenn die Beine schwer sind: 2.5-3 km reichen",
+      optional: "Danach 8 Minuten Core zu Hause, wenn du Energie hast",
       weekTitle: "Jogging locker",
-      weekAmount: "3.5-4 km, kein Gym",
-      labels: ["Jogging"],
-      runMinKm: 3.5
+      weekAmount: "3-4 km, kein Gym",
+      labels: ["Jogging", "Optional"]
     },
     6: {
       category: "Gym + Jogging",
-      title: "Ganzkörper + Arme",
-      amount: "Ganzkörper Maschinen + 3-4 km Laufband",
+      title: "Upper Pump",
+      amount: "Brust, Rücken, Arme + 20 Min Laufband",
       intensity: "Mittel",
-      explanation: "Alles kontrolliert. Am Ende locker aufs Laufband, nicht sprinten.",
+      explanation: "Oberkörper-Volumen für sichtbare Form. Keine Ego-Gewichte.",
       status: "Pflicht",
-      optional: "Laufband auf 3-4 km begrenzen, wenn du müde wirst",
-      weekTitle: "Ganzkörper + Arme",
-      weekAmount: "Gym + Laufband 3-4 km",
+      optional: "Letzte Sätze nur sauber, nicht bis komplett zerstört",
+      weekTitle: "Upper Pump",
+      weekAmount: "Brust, Rücken, Arme + Laufband",
       labels: ["Gym", "Jogging"],
-      strengthPlanId: "ale-full",
-      runMinKm: 3
+      strengthPlanId: "ale-upper"
     },
     0: {
-      category: "Regeneration",
-      title: "Regeneration",
-      amount: "Kein Gym",
-      intensity: "Sehr locker",
-      explanation: "Heute erholen. Der Körper baut in der Pause auf.",
+      category: "Home + Regeneration",
+      title: "Home Core",
+      amount: "12-15 Minuten zu Hause",
+      intensity: "Locker",
+      explanation: "Kein Gym. Kurzer Core-Block, dann essen und schlafen.",
       status: "Optional",
-      optional: "Spaziergang, Dehnen oder Mobility",
-      weekTitle: "Regeneration",
-      weekAmount: "kein Gym",
-      labels: ["Pause", "Optional"]
+      optional: "Wenn du müde bist: komplett frei machen",
+      weekTitle: "Home Core optional",
+      weekAmount: "12-15 Min Core oder frei",
+      labels: ["Home", "Optional"],
+      strengthPlanId: "ale-home"
     }
   },
   nevio: {
@@ -212,60 +208,113 @@ const joggingCards = [
     rows: [
       ["Ziel", "Grundausdauer"],
       ["Tempo", "reden können"],
-      ["Distanz", "2-3 km"]
+      ["Distanz", "3-4 km"]
     ]
   },
   {
     title: "Intervalllauf",
     rows: [
       ["Ziel", "schneller werden"],
-      ["Beispiel", "1 km einlaufen"],
-      ["Danach", "3 x 300 m schnell"],
+      ["Beispiel", "800 m einlaufen"],
+      ["Danach", "4 x 200 m zügig"],
       ["Pause", "dazwischen gehen"],
       ["Ende", "auslaufen"],
-      ["Maximal", "1 x pro Woche"]
+      ["Maximal", "alle 2 Wochen"]
     ]
   },
   {
     title: "Langer Lauf",
     rows: [
-      ["Ziel", "Ausdauer"],
-      ["Start", "3 km"],
-      ["Steigerung", "+0.5 km pro Woche"]
+      ["Ziel", "Fettstoffwechsel"],
+      ["Start", "4 km"],
+      ["Steigerung", "nur wenn Beine frisch sind"]
     ]
   }
 ];
+
+const nutritionPlansByProfile = {
+  ale: {
+    title: "Ernährung Ale",
+    subtitle: "6 Wochen Recomp: straffer werden, aber nicht runterhungern.",
+    stats: [
+      ["Größe", "183 cm"],
+      ["Gewicht", "67.5 kg nach Abendessen"],
+      ["Ziel", "mehr Schulter/Rücken/Brust, Bauch ruhiger"],
+      ["Protein", "110-130 g pro Tag"],
+      ["Schlaf", "8-10 Stunden"]
+    ],
+    rules: [
+      ["Kein Crash-Defizit", "Du bist nicht schwer. Iss leicht kontrolliert, aber genug für Training und Wachstum."],
+      ["Teller-Regel", "Jede Hauptmahlzeit: Protein + Gemüse/Frucht + gute Kohlenhydrate."],
+      ["Carbs ums Training", "Vor oder nach Gym: Reis, Pasta, Brot, Kartoffeln, Haferflocken oder Banane."],
+      ["Bauchfett", "Wird durch Wochenbilanz weniger, nicht durch Bauchübungen allein."],
+      ["Kreatin", "3-5 g täglich reichen. Viel trinken, keine Ladephase nötig."]
+    ],
+    meals: [
+      ["Frühstück", "Skyr/Quark oder Eier + Haferflocken/Brot + Frucht"],
+      ["Schule", "Sandwich mit Poulet/Käse/Ei oder Wrap + Wasser"],
+      ["Vor Gym", "Banane, Brot oder kleines Müsli 60-120 Min vorher"],
+      ["Nach Gym", "Proteinshake oder Joghurt plus normale Mahlzeit"],
+      ["Abendessen", "Proteinquelle + Reis/Pasta/Kartoffeln + Gemüse"],
+      ["Snack", "Skyr, Milch, Nüsse, Frucht oder Vollkornbrot"]
+    ],
+    weekGoal: "Wenn das Gewicht stark fällt oder du im Gym schwächer wirst: mehr essen. Wenn Bauch deutlich mehr wird: Süßgetränke/Snacks zuerst reduzieren."
+  },
+  nevio: {
+    title: "Ernährung",
+    subtitle: "Einfach halten: genug essen, genug Protein, genug trinken.",
+    stats: [
+      ["Protein", "zu jeder Hauptmahlzeit"],
+      ["Trinken", "Wasser über den Tag"],
+      ["Schlaf", "8-10 Stunden"]
+    ],
+    rules: [
+      ["Regel", "Nicht kompliziert machen: regelmäßig essen und Training abhaken."],
+      ["Vor Training", "Kleine Kohlenhydratquelle hilft: Banane, Brot oder Müsli."],
+      ["Nach Training", "Normale Mahlzeit mit Protein reicht."]
+    ],
+    meals: [
+      ["Frühstück", "Joghurt/Quark, Eier oder Käsebrot"],
+      ["Mittag", "Protein + Kohlenhydrate + Gemüse"],
+      ["Snack", "Frucht, Milchprodukt oder Sandwich"],
+      ["Abendessen", "Normal essen, nicht komplett sparen"]
+    ],
+    weekGoal: "Konstanz ist wichtiger als perfekte Zahlen."
+  }
+};
 
 const strengthPlansByProfile = {
   ale: {
     "ale-push": {
       id: "ale-push",
       dayLabel: "Mo",
-      title: "Push + Core",
+      title: "Push Fokus",
       subtitle: "Brust, Schultern, Trizeps",
-      warmup: "8 Minuten Laufband locker + 2 leichte Aufwärmsätze Brustpresse",
+      warmup: "6-8 Minuten Laufband locker + 2 leichte Aufwärmsätze Brustpresse",
       exercises: [
-        ["chest-press", "Brustpresse Maschine", "3 x 10-12", "Schulterblätter hinten halten, langsam ablassen, sauber drücken."],
-        ["incline-press", "Schrägbank-Brustpresse", "3 x 10-12", "Obere Brust treffen, kontrolliert drücken, Schultern unten halten."],
+        ["incline-press", "Schrägbank-Brustpresse", "3 x 8-12", "Oberkörper ruhig, Schultern unten, obere Brust kontrolliert treffen."],
+        ["chest-press", "Brustpresse Maschine", "3 x 8-12", "Schulterblätter hinten halten, langsam ablassen, sauber drücken."],
+        ["cable-fly", "Cable Fly oder Butterfly", "2 x 12-15", "Leichtes Gewicht, Brust bewusst anspannen, nicht reißen."],
         ["shoulder-press", "Schulterdrücken Maschine", "3 x 10-12", "Bauch anspannen, nicht ins Hohlkreuz fallen."],
-        ["lateral-raise", "Seitheben Maschine oder Kurzhanteln", "3 x 12-15", "Leichtes Gewicht, Arme nicht hochschwingen."],
-        ["triceps-pushdown", "Trizepsdrücken am Kabel", "3 x 12-15", "Ellbogen eng am Körper halten, unten kurz anspannen."],
-        ["plank", "Plank", "3 x 40-60 Sekunden", "Körper gerade, Bauch fest, ruhig atmen."]
+        ["lateral-raise", "Seitheben Maschine oder Kabel", "4 x 12-20", "Für breite Schultern. Leicht bleiben, oben kurz halten."],
+        ["triceps-pushdown", "Trizepsdrücken am Seil", "3 x 10-15", "Ellbogen eng am Körper halten, unten kurz anspannen."],
+        ["plank", "Plank", "3 x 45-60 Sekunden", "Körper gerade, Bauch fest, ruhig atmen."]
       ]
     },
     "ale-pull": {
       id: "ale-pull",
       dayLabel: "Mi",
-      title: "Pull + Bizeps",
+      title: "Pull Fokus",
       subtitle: "Rücken, hintere Schulter, Bizeps",
       warmup: "8 Minuten locker + 2 leichte Sätze Latziehen",
       exercises: [
-        ["lat-pulldown", "Latziehen am Kabel", "3 x 10-12", "Brust leicht raus, kontrolliert zur oberen Brust ziehen."],
-        ["seated-row", "Sitzendes Rudern", "3 x 10-12", "Rücken gerade, Schulterblätter aktiv nach hinten ziehen."],
-        ["plate-row", "Plate Loaded Rudern niedrig", "3 x 10-12", "Nicht reißen, Ellbogen nah am Körper führen."],
-        ["reverse-fly", "Reverse Butterfly", "2-3 x 12-15", "Hintere Schulter treffen, Arme kontrolliert öffnen."],
+        ["lat-pulldown", "Latziehen breit", "3 x 8-12", "Brust leicht raus, Ellbogen nach unten ziehen, nicht schwingen."],
+        ["seated-row", "Sitzendes Rudern eng", "3 x 10-12", "Rücken gerade, Schulterblätter aktiv nach hinten ziehen."],
+        ["chest-row", "Brustgestütztes Rudern", "3 x 10-12", "Oberkörper bleibt fest an der Bank, sauber ziehen."],
+        ["reverse-fly", "Reverse Butterfly", "3 x 12-15", "Hintere Schulter und Haltung. Kleine, kontrollierte Bewegung."],
+        ["face-pull", "Face Pulls am Kabel", "2 x 12-15", "Zum Gesicht ziehen, Ellbogen hoch, Schultern nicht hochziehen."],
         ["biceps-machine", "Bizeps-Curl Maschine", "3 x 10-12", "Ellbogen stabil, langsam hoch und runter."],
-        ["hammer-curls", "Hammer Curls", "2 x 12", "Handflächen zueinander, Oberkörper ruhig halten."]
+        ["hammer-curls", "Hammer Curls", "2 x 12-15", "Handflächen zueinander, Oberkörper ruhig halten."]
       ]
     },
     "ale-legs": {
@@ -275,28 +324,43 @@ const strengthPlansByProfile = {
       subtitle: "Beine, Bauch, unterer Rücken",
       warmup: "10 Minuten Laufband sehr locker + 2 leichte Sätze Beinpresse",
       exercises: [
-        ["leg-press", "Beinpresse", "4 x 10-12", "Füße stabil, Knie folgen den Zehen, kontrolliert tief gehen."],
+        ["leg-press", "Beinpresse", "4 x 8-12", "Füße stabil, Knie folgen den Zehen, kontrolliert tief gehen."],
         ["leg-extension", "Leg Extension", "3 x 12", "Oben kurz halten, langsam ablassen."],
         ["leg-curl", "Leg Curl", "3 x 12", "Kontrolliert ziehen, nicht mit Schwung arbeiten."],
+        ["walking-lunges", "Ausfallschritte oder Split Squat", "2 x 10 pro Bein", "Langsam, Knie stabil, kleiner Start wenn es neu ist."],
         ["calf-press", "Waden an Beinpresse", "3 x 15-20", "Volle Bewegung, oben kurz halten, langsam senken."],
-        ["hyperextensions", "Hyperextensions", "3 x 12", "Rücken kontrolliert strecken, nicht überstrecken."],
-        ["leg-raises", "Leg Raises", "3 x 10-12", "Bauch anspannen, Beine kontrolliert heben."]
+        ["hyperextensions", "Hyperextensions", "3 x 10-12", "Rücken kontrolliert strecken, nicht überstrecken."],
+        ["leg-raises", "Leg Raises", "3 x 10-15", "Bauch anspannen, Beine kontrolliert heben."]
       ]
     },
-    "ale-full": {
-      id: "ale-full",
+    "ale-upper": {
+      id: "ale-upper",
       dayLabel: "Sa",
-      title: "Ganzkörper + Arme",
-      subtitle: "Ganzkörper, Arme, Laufband",
+      title: "Upper Pump",
+      subtitle: "Oberkörper, Arme, Laufband",
       warmup: "8 Minuten Laufband locker + Gelenke kurz mobilisieren",
       exercises: [
-        ["hack-squat", "Hack Squat oder Beinpresse leicht", "3 x 10", "Nur moderat, weil Donnerstag schon Beine war."],
-        ["assisted-pullup", "Assisted Pull-Up oder Latziehen", "3 x 8-12", "Sauber ziehen, nicht mit Schwung arbeiten."],
+        ["assisted-pullup", "Assisted Pull-Up oder Latziehen", "3 x 8-12", "Rückenbreite. Sauber ziehen, nicht mit Schwung arbeiten."],
         ["machine-chest", "Brustpresse oder Butterfly", "3 x 10-12", "Kontrollierte Wiederholungen, Brust bewusst anspannen."],
         ["cable-row", "Kabelrudern", "3 x 10-12", "Brust aufrecht, Schulterblätter nach hinten ziehen."],
-        ["triceps-overhead", "Überkopf Trizeps am Kabel", "2 x 12-15", "Ellbogen ruhig halten, kontrolliert strecken."],
-        ["preacher-curl", "Bizeps-Curl Maschine", "2 x 12-15", "Langsam curlen, nicht reißen."],
-        ["treadmill", "Laufband locker", "20-30 Minuten", "Ruhiges Tempo, du solltest noch reden können."]
+        ["lateral-raise-pump", "Seitheben Pump", "3 x 15-20", "Leicht, sauber, Schultern brennen lassen."],
+        ["superset-arms", "Bizeps + Trizeps Supersatz", "3 x 12 + 12", "Curl direkt gefolgt von Trizepsdrücken, sauber bleiben."],
+        ["cable-crunch", "Cable Crunch", "3 x 12-15", "Bauch rund machen, nicht am Nacken ziehen."],
+        ["treadmill", "Laufband locker", "20 Minuten", "Ruhiges Tempo, du solltest noch reden können."]
+      ]
+    },
+    "ale-home": {
+      id: "ale-home",
+      dayLabel: "So",
+      title: "Home Core",
+      subtitle: "Bauch, Haltung, Mobility",
+      warmup: "2 Minuten locker bewegen",
+      exercises: [
+        ["dead-bug", "Dead Bug", "3 x 10 pro Seite", "Langsam, unteren Rücken ruhig am Boden halten."],
+        ["side-plank", "Seitstütz", "2 x 30-45 Sekunden pro Seite", "Hüfte oben halten, Körper gerade."],
+        ["pushups-clean", "Saubere Liegestütze", "2 x max sauber", "Nur saubere Wiederholungen, nicht durchhängen."],
+        ["band-pullapart", "Band Pull-Aparts oder Reverse Fly leicht", "2 x 20", "Für Haltung und hintere Schulter."],
+        ["mobility", "Brust/Lat/Hüfte dehnen", "5 Minuten", "Ruhig atmen, nicht federn."]
       ]
     }
   },
@@ -365,7 +429,6 @@ const strengthPlansByProfile = {
 let currentProfile = null;
 let activeTab = "today";
 let selectedStrengthPlan = null;
-let pendingStravaReturn = null;
 let state = loadState();
 
 const loginView = document.querySelector("#loginView");
@@ -377,17 +440,17 @@ const todayContent = document.querySelector("#todayContent");
 const weekContent = document.querySelector("#weekContent");
 const joggingContent = document.querySelector("#joggingContent");
 const strengthContent = document.querySelector("#strengthContent");
+const nutritionContent = document.querySelector("#nutritionContent");
 const progressContent = document.querySelector("#progressContent");
 
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
-  pendingStravaReturn = readStravaReturn();
   bindLogin();
   bindTabs();
   registerServiceWorker();
 
-  const storedProfile = pendingStravaReturn?.profile || normalizeProfile(localStorage.getItem(storageKeys.profile) || "");
+  const storedProfile = normalizeProfile(localStorage.getItem(storageKeys.profile) || "");
   if (storedProfile) {
     openProfile(storedProfile);
   } else {
@@ -433,7 +496,6 @@ function normalizeProfile(value) {
 }
 
 function openProfile(profile) {
-  const stravaReturn = pendingStravaReturn?.profile === profile ? pendingStravaReturn : null;
   currentProfile = profile;
   selectedStrengthPlan = null;
   localStorage.setItem(storageKeys.profile, profile);
@@ -441,14 +503,7 @@ function openProfile(profile) {
   loginMessage.textContent = "";
   loginView.classList.add("is-hidden");
   mainView.classList.remove("is-hidden");
-  setTab(stravaReturn ? "progress" : "today");
-
-  if (stravaReturn) {
-    pendingStravaReturn = null;
-    if (stravaReturn.status === "connected") {
-      syncStravaActivities();
-    }
-  }
+  setTab("today");
 }
 
 function showLogin() {
@@ -474,6 +529,7 @@ function renderAll() {
   renderWeek();
   renderJogging();
   renderStrength();
+  renderNutrition();
   renderProgress();
 }
 
@@ -662,7 +718,7 @@ function renderStrength() {
         <h1>${escapeHtml(strengthTitle)}</h1>
         <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
       </div>
-      <p>${currentProfile === "ale" ? "Mo, Mi, Do und Sa ins Gym. Di, Fr und So kein Gym." : "Wähle deinen heutigen Plan."}</p>
+      <p>${currentProfile === "ale" ? "Mo, Mi, Do und Sa Gym. Di Regeneration, Fr Lauf, So Home optional." : "Wähle deinen heutigen Plan."}</p>
     </div>
 
     ${currentProfile === "ale" ? `
@@ -734,6 +790,59 @@ function renderExerciseList(plan) {
   `;
 }
 
+function renderNutrition() {
+  const plan = nutritionPlansByProfile[currentProfile] || nutritionPlansByProfile.nevio;
+
+  nutritionContent.innerHTML = `
+    <div class="page-heading">
+      <div class="page-topline">
+        <h1>Essen</h1>
+        <button class="small-switch-button" type="button" data-switch-profile>Profil wechseln</button>
+      </div>
+      <p>${escapeHtml(plan.subtitle)}</p>
+    </div>
+
+    <article class="nutrition-hero info-card">
+      <p class="card-kicker">Ziel</p>
+      <h2>${escapeHtml(plan.title)}</h2>
+      <div class="info-rows">
+        ${plan.stats.map(([label, value]) => `
+          <div class="info-row">
+            <span>${escapeHtml(label)}</span>
+            <strong>${escapeHtml(value)}</strong>
+          </div>
+        `).join("")}
+      </div>
+    </article>
+
+    <div class="card-grid">
+      ${plan.rules.map(([title, text]) => `
+        <article class="info-card compact-card">
+          <h2>${escapeHtml(title)}</h2>
+          <p>${escapeHtml(text)}</p>
+        </article>
+      `).join("")}
+    </div>
+
+    <article class="info-card">
+      <h2>Essens-Bausteine</h2>
+      <div class="info-rows">
+        ${plan.meals.map(([label, value]) => `
+          <div class="info-row nutrition-row">
+            <span>${escapeHtml(label)}</span>
+            <strong>${escapeHtml(value)}</strong>
+          </div>
+        `).join("")}
+      </div>
+    </article>
+
+    <article class="optional-card">
+      <p class="card-kicker">Woche prüfen</p>
+      <h3>${escapeHtml(plan.weekGoal)}</h3>
+    </article>
+  `;
+}
+
 function renderProgress() {
   const doneDays = weekIndexes.filter((dayIndex) => isDayDone(currentProfile, dayIndex));
   const count = doneDays.length;
@@ -756,23 +865,21 @@ function renderProgress() {
       <div class="progress-bar" aria-label="Fortschritt ${percent} Prozent">
         <span style="width: ${percent}%"></span>
       </div>
+      <p class="progress-note">${escapeHtml(getMotivation(count))}</p>
     </article>
-    ${supportsStrava(currentProfile) ? renderStravaCard() : ""}
     <article class="info-card">
       <h2>Wochentage</h2>
       <div class="day-pill-grid">
         ${weekIndexes.map((dayIndex) => {
           const done = isDayDone(currentProfile, dayIndex);
-          const stravaMatch = supportsStrava(currentProfile) ? getStravaMatch(currentProfile, dayIndex) : null;
           return `
-            <div class="day-pill ${done ? "is-done" : ""} ${stravaMatch ? "is-strava-done" : ""}">
+            <div class="day-pill ${done ? "is-done" : ""}">
               <strong>${escapeHtml(weekdayShort[dayIndex])}</strong>
-              <span>${stravaMatch ? "Strava" : done ? "erledigt" : "offen"}</span>
+              <span>${done ? "erledigt" : "offen"}</span>
             </div>
           `;
         }).join("")}
       </div>
-      ${supportsStrava(currentProfile) ? renderStravaBadges() : ""}
     </article>
     <button class="reset-button" type="button" id="resetWeekButton">Woche zurücksetzen</button>
     <p class="app-version">${APP_VERSION}</p>
@@ -783,73 +890,6 @@ function renderProgress() {
     renderAll();
   });
 
-  const connectButton = document.querySelector("#stravaConnectButton");
-  connectButton?.addEventListener("click", connectStrava);
-
-  const syncButton = document.querySelector("#stravaSyncButton");
-  syncButton?.addEventListener("click", () => syncStravaActivities());
-
-  const statusButton = document.querySelector("#stravaStatusButton");
-  statusButton?.addEventListener("click", () => checkStravaStatus());
-}
-
-function renderStravaCard() {
-  const strava = getProfileData(currentProfile).strava || {};
-  const connected = Boolean(strava.connected && strava.athlete);
-  const runs = Array.isArray(strava.runs) ? strava.runs.slice(0, 3) : [];
-  const staticHostWarning = isGitHubPagesHost()
-    ? "Strava braucht ein Vercel-Deployment. GitHub Pages kann kein sicheres Backend ausführen."
-    : "";
-  const status = connected
-    ? `Verbunden als ${formatAthleteName(strava.athlete)}`
-    : "Nicht verbunden";
-
-  return `
-    <article class="strava-card">
-      <div class="strava-card-head">
-        <div>
-          <p class="card-kicker">Strava</p>
-          <h2>Strava</h2>
-          <p>${escapeHtml(status)}</p>
-        </div>
-        <span class="strava-dot ${connected ? "is-connected" : ""}"></span>
-      </div>
-      <div class="strava-actions">
-        <button class="primary-button" type="button" id="stravaConnectButton">Mit Strava verbinden</button>
-        <button class="ghost-button" type="button" id="stravaStatusButton">Verbindung prüfen</button>
-        <button class="ghost-button" type="button" id="stravaSyncButton">Läufe synchronisieren</button>
-      </div>
-      ${staticHostWarning ? `<p class="strava-error">${escapeHtml(staticHostWarning)}</p>` : ""}
-      ${strava.message ? `<p class="strava-message">${escapeHtml(strava.message)}</p>` : ""}
-      ${strava.error ? `<p class="strava-error">${escapeHtml(strava.error)}</p>` : ""}
-      ${runs.length ? `
-        <div class="strava-run-list">
-          ${runs.map((run) => `
-            <div class="strava-run">
-              <strong>${escapeHtml(formatRunDate(run.startDateLocal))}</strong>
-              <span>${escapeHtml(run.distance)} · ${escapeHtml(run.pace)} · ${escapeHtml(run.duration)}</span>
-              <small>${escapeHtml(run.type)}</small>
-            </div>
-          `).join("")}
-        </div>
-      ` : ""}
-    </article>
-  `;
-}
-
-function renderStravaBadges() {
-  const profileWeek = getProfileWeek(currentProfile);
-  const matches = profileWeek.stravaMatches || {};
-  const rows = weekIndexes
-    .filter((dayIndex) => matches[dayIndex])
-    .map((dayIndex) => `
-      <div class="strava-badge">
-        <strong>${escapeHtml(weekdays[dayIndex])}</strong>
-        <span>Automatisch erledigt durch Strava</span>
-      </div>
-    `);
-
-  return rows.length ? `<div class="strava-badge-list">${rows.join("")}</div>` : "";
 }
 
 function getProfileData(profile) {
@@ -857,238 +897,10 @@ function getProfileData(profile) {
   return state[profile];
 }
 
-function getStravaMatch(profile, dayIndex) {
-  return getProfileWeek(profile).stravaMatches?.[dayIndex] || null;
-}
-
-function supportsStrava(profile) {
-  return Boolean(profiles[profile]?.hasStrava);
-}
-
-function readStravaReturn() {
-  const params = new URLSearchParams(window.location.search);
-  const stravaStatus = params.get("strava");
-  if (!stravaStatus) return null;
-
-  const profile = normalizeProfile(params.get("profile"));
-  if (!profile) return null;
-  if (!supportsStrava(profile)) {
-    params.delete("strava");
-    params.delete("profile");
-    params.delete("state");
-    params.delete("message");
-    const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
-    window.history.replaceState({}, document.title, cleanUrl);
-    return null;
-  }
-
-  if (profile && stravaStatus === "error") {
-    const message = params.get("message") || "Strava-Verbindung fehlgeschlagen. Bitte erneut versuchen.";
-    localStorage.setItem(storageKeys.profile, profile);
-    setStravaMessage(profile, "", message);
-  }
-
-  params.delete("strava");
-  params.delete("profile");
-  params.delete("state");
-  params.delete("message");
-
-  const cleanUrl = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
-  window.history.replaceState({}, document.title, cleanUrl);
-  return { profile, status: stravaStatus };
-}
-
-function connectStrava() {
-  if (!supportsStrava(currentProfile)) return;
-
-  if (isGitHubPagesHost()) {
-    setStravaMessage(currentProfile, "", "GitHub Pages kann kein sicheres Strava-Backend ausführen. Bitte die Vercel-Version verwenden.");
-    renderProgress();
-    return;
-  }
-
-  const returnTo = `${window.location.origin}${window.location.pathname}`;
-  window.location.href = `${STRAVA_API_BASE}/login?profile=${encodeURIComponent(currentProfile)}&returnTo=${encodeURIComponent(returnTo)}`;
-}
-
-async function syncStravaActivities(options = {}) {
-  const profile = currentProfile;
-  if (!profile) return;
-  if (!supportsStrava(profile)) return;
-
-  if (isGitHubPagesHost()) {
-    setStravaMessage(profile, "", "Strava-Sync ist nur auf dem Vercel-Deployment verfügbar.");
-    renderProgress();
-    return;
-  }
-
-  setStravaMessage(profile, "Läufe werden synchronisiert.", "");
-  if (!options.silent) renderProgress();
-
-  try {
-    const response = await fetch(`${STRAVA_API_BASE}/activities?profile=${encodeURIComponent(profile)}`, {
-      credentials: "include"
-    });
-
-    if (response.status === 401) {
-      setStravaConnection(profile, {
-        connected: false,
-        error: "Strava ist noch nicht verbunden. Bitte einmal neu verbinden und danach Läufe synchronisieren.",
-        message: ""
-      });
-      renderAll();
-      return;
-    }
-
-    if (!response.ok) {
-      throw new Error("Strava-Synchronisation fehlgeschlagen.");
-    }
-
-    const data = await response.json();
-    const runs = Array.isArray(data.runs) ? data.runs : [];
-    const matches = applyStravaRunsToProgress(profile, runs);
-    setStravaConnection(profile, {
-      connected: true,
-      athlete: data.athlete,
-      runs: runs.slice(0, 3),
-      lastSync: new Date().toISOString(),
-      message: matches
-        ? `${matches} Jogging-Einheit automatisch erledigt.`
-        : "Synchronisiert. Kein passender geplanter Lauf gefunden.",
-      error: ""
-    });
-    saveState();
-    renderAll();
-  } catch (error) {
-    setStravaMessage(profile, "", error.message || "Strava-Synchronisation fehlgeschlagen.");
-    renderAll();
-  }
-}
-
-async function checkStravaStatus() {
-  const profile = currentProfile;
-  if (!profile || !supportsStrava(profile)) return;
-
-  if (isGitHubPagesHost()) {
-    setStravaMessage(profile, "", "Strava funktioniert nur auf der Vercel-Version, nicht auf GitHub Pages.");
-    renderProgress();
-    return;
-  }
-
-  setStravaMessage(profile, "Strava-Verbindung wird geprüft.", "");
-  renderProgress();
-
-  try {
-    const response = await fetch(`${STRAVA_API_BASE}/status?profile=${encodeURIComponent(profile)}`, {
-      credentials: "include"
-    });
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      throw new Error(data.error || "Strava-Status konnte nicht geprüft werden.");
-    }
-
-    if (!data.configured) {
-      const missing = Array.isArray(data.missing) && data.missing.length ? data.missing.join(", ") : "Vercel-Variablen";
-      setStravaMessage(profile, "", `Backend erreichbar, aber es fehlen: ${missing}.`);
-      renderAll();
-      return;
-    }
-
-    if (data.connected) {
-      setStravaConnection(profile, {
-        connected: true,
-        athlete: data.athlete,
-        message: "Strava ist verbunden. Läufe können synchronisiert werden.",
-        error: ""
-      });
-    } else {
-      setStravaConnection(profile, {
-        connected: false,
-        message: "Backend ist bereit. Strava ist auf diesem Gerät noch nicht verbunden.",
-        error: ""
-      });
-    }
-    renderAll();
-  } catch (error) {
-    setStravaMessage(profile, "", error.message || "Strava-Status konnte nicht geprüft werden.");
-    renderAll();
-  }
-}
-
-function setStravaConnection(profile, data) {
-  const profileData = getProfileData(profile);
-  profileData.strava = { ...(profileData.strava || {}), ...data };
-  saveState();
-}
-
-function setStravaMessage(profile, message, error) {
-  setStravaConnection(profile, { message, error });
-}
-
-function applyStravaRunsToProgress(profile, runs) {
-  let matches = 0;
-  const profileWeek = getProfileWeek(profile);
-  profileWeek.stravaMatches ||= {};
-
-  runs.forEach((run) => {
-    const dayIndex = getRunDayIndex(run);
-    if (dayIndex === null || dayIndex === undefined) return;
-    if (!isCurrentWeek(run.startDateLocal)) return;
-    if (!isPlannedJoggingDay(profile, dayIndex)) return;
-    if (!runMeetsPlannedDistance(profile, dayIndex, run.distanceKm)) return;
-
-    if (!profileWeek.days[dayIndex]) matches += 1;
-    profileWeek.days[dayIndex] = true;
-    profileWeek.stravaMatches[dayIndex] = {
-      id: run.id,
-      distance: run.distance,
-      pace: run.pace,
-      duration: run.duration,
-      startDateLocal: run.startDateLocal
-    };
-  });
-
-  return matches;
-}
-
-function isPlannedJoggingDay(profile, dayIndex) {
-  return planByProfile[profile]?.[dayIndex]?.labels?.includes("Jogging");
-}
-
-function runMeetsPlannedDistance(profile, dayIndex, distanceKm) {
-  const plan = planByProfile[profile]?.[dayIndex] || {};
-  const minDistance = plan.runMinKm || extractMinimumDistance(plan.amount || "");
-  if (!minDistance) return true;
-  return Number(distanceKm) >= minDistance * 0.85;
-}
-
-function extractMinimumDistance(value) {
-  const match = String(value).match(/(\d+(?:[.,]\d+)?)/);
-  return match ? Number(match[1].replace(",", ".")) : null;
-}
-
-function getRunDayIndex(run) {
-  if (!run.startDateLocal) return null;
-  return new Date(run.startDateLocal).getDay();
-}
-
-function isCurrentWeek(dateValue) {
-  if (!dateValue) return false;
-  return getWeekKey(new Date(dateValue)) === getWeekKey(new Date());
-}
-
-function formatAthleteName(athlete = {}) {
-  return [athlete.firstname, athlete.lastname].filter(Boolean).join(" ") || athlete.username || "Strava";
-}
-
-function formatRunDate(value) {
-  if (!value) return "Unbekannt";
-  return new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit" }).format(new Date(value));
-}
-
-function isGitHubPagesHost() {
-  return window.location.hostname.endsWith("github.io");
+function getMotivation(count) {
+  if (count <= 2) return "Ruhig starten. Diese Woche zählt vor allem Wiederkommen.";
+  if (count <= 4) return "Sehr gut. Du baust Routine auf.";
+  return "Stark. Jetzt sauber essen und genug schlafen.";
 }
 
 function loadState() {
@@ -1182,7 +994,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=9").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=10").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 

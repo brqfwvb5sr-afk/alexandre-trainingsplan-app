@@ -446,114 +446,6 @@ input::placeholder {
   margin-bottom: 12px;
 }
 
-.strava-card {
-  border-radius: var(--radius-lg);
-  padding: 18px;
-  margin-bottom: 12px;
-  background: linear-gradient(145deg, rgba(252, 76, 2, 0.2), rgba(255, 255, 255, 0.075));
-  border: 1px solid rgba(252, 76, 2, 0.42);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(22px) saturate(130%);
-  -webkit-backdrop-filter: blur(22px) saturate(130%);
-}
-
-.strava-card h2 {
-  margin-bottom: 6px;
-  font-size: 1.42rem;
-  line-height: 1.1;
-}
-
-.strava-card p {
-  margin-bottom: 0;
-  color: rgba(248, 251, 255, 0.84);
-  line-height: 1.4;
-}
-
-.strava-card-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: flex-start;
-  margin-bottom: 14px;
-}
-
-.strava-dot {
-  width: 14px;
-  height: 14px;
-  margin-top: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.34);
-  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.06);
-}
-
-.strava-dot.is-connected {
-  background: #fc4c02;
-  box-shadow: 0 0 0 6px rgba(252, 76, 2, 0.16);
-}
-
-.strava-actions {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.strava-message,
-.strava-error {
-  margin-top: 12px;
-  font-size: 0.92rem;
-  font-weight: 800;
-}
-
-.strava-error {
-  color: var(--red) !important;
-}
-
-.strava-run-list {
-  display: grid;
-  gap: 9px;
-  margin-top: 14px;
-}
-
-.strava-run {
-  display: grid;
-  gap: 3px;
-  padding: 12px;
-  border-radius: 16px;
-  background: rgba(0, 0, 0, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.strava-run strong {
-  font-size: 1rem;
-}
-
-.strava-run span,
-.strava-run small {
-  color: var(--muted);
-  font-weight: 760;
-}
-
-.strava-badge-list {
-  display: grid;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.strava-badge {
-  display: grid;
-  gap: 2px;
-  padding: 11px 12px;
-  border-radius: 15px;
-  background: rgba(252, 76, 2, 0.14);
-  border: 1px solid rgba(252, 76, 2, 0.34);
-}
-
-.strava-badge span {
-  color: rgba(248, 251, 255, 0.78);
-  font-size: 0.86rem;
-  font-weight: 800;
-}
-
 .optional-card h3 {
   margin-bottom: 0;
   font-size: 1.22rem;
@@ -650,6 +542,12 @@ input::placeholder {
 .plan-label.is-cardio-calisthenics {
   color: #061018;
   background: linear-gradient(135deg, var(--cyan), var(--blue));
+  border-color: transparent;
+}
+
+.plan-label.is-home {
+  color: #061018;
+  background: linear-gradient(135deg, var(--amber), var(--green));
   border-color: transparent;
 }
 
@@ -804,6 +702,23 @@ input::placeholder {
   gap: 10px;
 }
 
+.nutrition-hero h2 {
+  margin-bottom: 14px;
+}
+
+.compact-card {
+  margin-bottom: 0;
+}
+
+.nutrition-row {
+  align-items: flex-start;
+}
+
+.nutrition-row strong {
+  max-width: 66%;
+  line-height: 1.25;
+}
+
 .progress-topline {
   align-items: baseline;
   margin-bottom: 14px;
@@ -831,6 +746,14 @@ input::placeholder {
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--green), var(--cyan), var(--blue));
+}
+
+.progress-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
 .day-pill-grid {
@@ -863,11 +786,6 @@ input::placeholder {
 .day-pill.is-done {
   background: rgba(113, 243, 176, 0.16);
   border-color: rgba(113, 243, 176, 0.58);
-}
-
-.day-pill.is-strava-done {
-  background: rgba(252, 76, 2, 0.16);
-  border-color: rgba(252, 76, 2, 0.58);
 }
 
 .reset-button {
@@ -924,7 +842,7 @@ input::placeholder {
   width: min(calc(100% - 22px), calc(var(--max-width) - 22px));
   height: 78px;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 3px;
   padding: 8px;
   border-radius: 25px;
@@ -940,7 +858,7 @@ input::placeholder {
   border-radius: 18px;
   background: transparent;
   color: rgba(235, 243, 255, 0.62);
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 830;
   transition: transform 140ms ease, background 140ms ease, color 140ms ease;
 }
@@ -998,6 +916,23 @@ input::placeholder {
   border-radius: 5px;
   background: var(--green);
   transform: rotate(45deg);
+}
+
+.tab-icon-nutrition::before {
+  left: 4px;
+  right: 4px;
+  top: 2px;
+  height: 13px;
+  border: 2px solid var(--amber);
+  border-radius: 2px 2px 8px 8px;
+}
+
+.tab-icon-nutrition::after {
+  left: 8px;
+  top: 0;
+  width: 3px;
+  height: 9px;
+  background: var(--amber);
 }
 
 .tab-icon-progress::before {

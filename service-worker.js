@@ -1,10 +1,10 @@
-const CACHE_NAME = "trainingsplan-v9";
+const CACHE_NAME = "trainingsplan-v10";
 const APP_SHELL = [
   "./index.html",
-  "./style.css?v=9",
-  "./app.js?v=9",
+  "./style.css?v=10",
+  "./app.js?v=10",
   "./manifest.json",
-  "./manifest.json?v=9",
+  "./manifest.json?v=10",
   "./apple-touch-icon.png",
   "./icon-192.png",
   "./icon-512.png",
