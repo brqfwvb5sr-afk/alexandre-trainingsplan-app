@@ -392,6 +392,12 @@ input::placeholder {
   text-align: right;
   font-size: 1.08rem;
   font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.fact-row.is-core-focus {
+  border-color: rgba(255, 196, 87, 0.38);
+  background: rgba(255, 196, 87, 0.10);
 }
 
 .today-explanation {
@@ -499,6 +505,13 @@ input::placeholder {
   font-weight: 820;
 }
 
+.week-core {
+  margin-bottom: 14px;
+  color: #ffe2a3;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
 .label-row {
   display: flex;
   flex-wrap: wrap;
@@ -520,6 +533,12 @@ input::placeholder {
 .plan-label.is-gym {
   color: #061018;
   background: linear-gradient(135deg, var(--green), var(--cyan));
+  border-color: transparent;
+}
+
+.plan-label.is-core {
+  color: #061018;
+  background: linear-gradient(135deg, var(--amber), #ffffff);
   border-color: transparent;
 }
 
@@ -549,6 +568,11 @@ input::placeholder {
   color: #061018;
   background: linear-gradient(135deg, var(--amber), var(--green));
   border-color: transparent;
+}
+
+.core-plan-card {
+  border-color: rgba(255, 196, 87, 0.36);
+  background: rgba(255, 196, 87, 0.12);
 }
 
 .today-strength-link {

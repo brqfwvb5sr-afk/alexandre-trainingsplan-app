@@ -2,7 +2,7 @@ const storageKeys = {
   profile: "trainingsplan.currentProfile",
   state: "trainingsplan.state.v2"
 };
-const APP_VERSION = "Version 10";
+const APP_VERSION = "Version 11";
 
 const profiles = {
   ale: { label: "Ale", hasStrength: true },
@@ -24,13 +24,14 @@ const planByProfile = {
       category: "Gym + Jogging",
       title: "Push Fokus",
       amount: "Brust, Schultern, Trizeps + 15-20 Min locker",
+      coreFocus: "Plank 3 x 45-60 Sekunden",
       intensity: "Mittel",
       explanation: "Oberkörper breit machen: Brust und Schultern sauber trainieren, danach nur locker bewegen.",
       status: "Pflicht",
       optional: "10 Minuten Mobility, wenn Schulter oder Ellenbogen ziehen",
       weekTitle: "Push Fokus",
       weekAmount: "Brust, Schultern, Trizeps + 15-20 Min locker",
-      labels: ["Gym", "Jogging"],
+      labels: ["Gym", "Core", "Jogging"],
       strengthPlanId: "ale-push"
     },
     2: {
@@ -48,65 +49,70 @@ const planByProfile = {
     3: {
       category: "Gym + Jogging",
       title: "Pull Fokus",
-      amount: "Rücken, hintere Schulter, Bizeps + 15-20 Min locker",
+      amount: "Rücken, hintere Schulter, Bizeps + Core + 15-20 Min locker",
+      coreFocus: "Cable Crunch oder Hanging Knee Raises 3 x 12-15",
       intensity: "Mittel",
       explanation: "Rückenbreite und Haltung. Danach locker laufen, keine Intervalle.",
       status: "Pflicht",
       optional: "2 Sätze Face Pulls extra, wenn du dich gut fühlst",
       weekTitle: "Pull Fokus",
-      weekAmount: "Rücken, hintere Schulter, Bizeps + locker laufen",
-      labels: ["Gym", "Jogging"],
+      weekAmount: "Rücken, hintere Schulter, Bizeps + Core + locker laufen",
+      labels: ["Gym", "Core", "Jogging"],
       strengthPlanId: "ale-pull"
     },
     4: {
       category: "Gym",
       title: "Beine + Core",
       amount: "Beine, Bauch, unterer Rücken",
+      coreFocus: "Leg Raises 3 x 10-15",
       intensity: "Mittel",
       explanation: "Nicht auslassen: starke Beine und Core lassen den Körper insgesamt athletischer wirken.",
       status: "Pflicht",
       optional: "Nur 10 Minuten sehr locker warmmachen, kein harter Lauf danach",
       weekTitle: "Beine + Core",
       weekAmount: "Beine, Bauch, unterer Rücken",
-      labels: ["Gym"],
+      labels: ["Gym", "Core"],
       strengthPlanId: "ale-legs"
     },
     5: {
       category: "Jogging",
-      title: "Lockerer Lauf",
-      amount: "3-4 km",
+      title: "Lockerer Lauf + Bauch",
+      amount: "3-4 km + 8 Minuten Bauch/Core",
+      coreFocus: "2 Runden: Dead Bug, Crunches, Plank",
       intensity: "Locker",
       explanation: "Kein Gym. Fettverbrennung und Ausdauer, aber nicht Vollgas.",
       status: "Pflicht",
-      optional: "Danach 8 Minuten Core zu Hause, wenn du Energie hast",
-      weekTitle: "Jogging locker",
-      weekAmount: "3-4 km, kein Gym",
-      labels: ["Jogging", "Optional"]
+      optional: "Core kurz halten, aber sauber: nicht hetzen",
+      weekTitle: "Jogging + Bauch",
+      weekAmount: "3-4 km + 8 Min Core, kein Gym",
+      labels: ["Jogging", "Core"]
     },
     6: {
       category: "Gym + Jogging",
       title: "Upper Pump",
       amount: "Brust, Rücken, Arme + 20 Min Laufband",
+      coreFocus: "Cable Crunch 3 x 12-15",
       intensity: "Mittel",
       explanation: "Oberkörper-Volumen für sichtbare Form. Keine Ego-Gewichte.",
       status: "Pflicht",
       optional: "Letzte Sätze nur sauber, nicht bis komplett zerstört",
       weekTitle: "Upper Pump",
       weekAmount: "Brust, Rücken, Arme + Laufband",
-      labels: ["Gym", "Jogging"],
+      labels: ["Gym", "Core", "Jogging"],
       strengthPlanId: "ale-upper"
     },
     0: {
       category: "Home + Regeneration",
-      title: "Home Core",
+      title: "Home Bauch/Core",
       amount: "12-15 Minuten zu Hause",
+      coreFocus: "Dead Bug + Seitstütz + Mobility",
       intensity: "Locker",
       explanation: "Kein Gym. Kurzer Core-Block, dann essen und schlafen.",
       status: "Optional",
       optional: "Wenn du müde bist: komplett frei machen",
-      weekTitle: "Home Core optional",
+      weekTitle: "Home Bauch/Core optional",
       weekAmount: "12-15 Min Core oder frei",
-      labels: ["Home", "Optional"],
+      labels: ["Home", "Core", "Optional"],
       strengthPlanId: "ale-home"
     }
   },
@@ -314,7 +320,8 @@ const strengthPlansByProfile = {
         ["reverse-fly", "Reverse Butterfly", "3 x 12-15", "Hintere Schulter und Haltung. Kleine, kontrollierte Bewegung."],
         ["face-pull", "Face Pulls am Kabel", "2 x 12-15", "Zum Gesicht ziehen, Ellbogen hoch, Schultern nicht hochziehen."],
         ["biceps-machine", "Bizeps-Curl Maschine", "3 x 10-12", "Ellbogen stabil, langsam hoch und runter."],
-        ["hammer-curls", "Hammer Curls", "2 x 12-15", "Handflächen zueinander, Oberkörper ruhig halten."]
+        ["hammer-curls", "Hammer Curls", "2 x 12-15", "Handflächen zueinander, Oberkörper ruhig halten."],
+        ["core-crunch", "Cable Crunch oder Hanging Knee Raises", "3 x 12-15", "Bauch aktiv anspannen, langsam arbeiten, nicht mit Schwung."]
       ]
     },
     "ale-legs": {
@@ -565,6 +572,12 @@ function renderToday() {
           <span>Wie viel</span>
           <strong>${escapeHtml(plan.amount)}</strong>
         </div>
+        ${plan.coreFocus ? `
+          <div class="fact-row is-core-focus">
+            <span>Bauch/Core</span>
+            <strong>${escapeHtml(plan.coreFocus)}</strong>
+          </div>
+        ` : ""}
         <div class="fact-row">
           <span>Intensität</span>
           <strong>${escapeHtml(plan.intensity)}</strong>
@@ -627,6 +640,7 @@ function renderWeek() {
               ${isToday ? `<span class="today-chip">Heute</span>` : ""}
             </div>
             <p class="week-amount">${escapeHtml(plan.weekAmount)}</p>
+            ${plan.coreFocus ? `<p class="week-core">Bauch/Core: ${escapeHtml(plan.coreFocus)}</p>` : ""}
             <div class="label-row">
               ${plan.labels.map((label) => `<span class="plan-label ${labelClass(label)}">${escapeHtml(label)}</span>`).join("")}
             </div>
@@ -725,6 +739,10 @@ function renderStrength() {
       <article class="optional-card">
         <p class="card-kicker">Regel</p>
         <h3>Erst Technik, dann Gewicht. Jede Übung mit 1-2 Wiederholungen Reserve beenden.</h3>
+      </article>
+      <article class="optional-card core-plan-card">
+        <p class="card-kicker">Bauch/Core fix</p>
+        <h3>Mo Plank, Mi Cable Crunch oder Hanging Knee Raises, Do Leg Raises, Sa Cable Crunch. Fr/SO kurz zu Hause, wenn du fit bist.</h3>
       </article>
     ` : ""}
 
@@ -994,7 +1012,7 @@ function registerServiceWorker() {
     });
 
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js?v=10").then((registration) => {
+      navigator.serviceWorker.register("service-worker.js?v=11").then((registration) => {
         updateRegistration = registration;
         registration.update().catch(() => {});
 

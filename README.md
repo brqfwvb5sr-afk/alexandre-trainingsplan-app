@@ -28,13 +28,15 @@ Die App funktioniert auch als statisches Frontend auf GitHub Pages.
 
 Ale ist 16 Jahre alt, ca. 183 cm gross und aktuell ca. 67.5 kg nach grossem Abendessen. Der Plan ist auf Koerper-Recomposition ausgelegt: mehr Schulter, Ruecken, Brust und Arme, Bauch ruhiger, aber ohne Crash-Diaet.
 
-- Montag: Push Fokus + lockeres Laufband
+- Montag: Push Fokus + lockeres Laufband, Bauch/Core: Plank
 - Dienstag: Regeneration
-- Mittwoch: Pull Fokus + lockeres Laufband
-- Donnerstag: Beine + Core
-- Freitag: lockerer Lauf, kein Gym
-- Samstag: Upper Pump + Laufband
-- Sonntag: optional Home Core oder frei
+- Mittwoch: Pull Fokus + lockeres Laufband, Bauch/Core: Cable Crunch oder Hanging Knee Raises
+- Donnerstag: Beine + Core, Bauch/Core: Leg Raises
+- Freitag: lockerer Lauf + 8 Minuten Bauch/Core, kein Gym
+- Samstag: Upper Pump + Laufband, Bauch/Core: Cable Crunch
+- Sonntag: optional Home Bauch/Core oder frei
+
+Der Bauch/Core-Fokus ist bewusst sichtbar geplant. Bauchuebungen machen die Mitte stabiler und haerter, waehrend Bauchfett vor allem ueber Training, Ernaehrung, Schlaf und Wochenbilanz weniger wird.
 
 Ernaehrung fuer Ale:
 
