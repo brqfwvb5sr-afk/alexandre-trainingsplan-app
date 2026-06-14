@@ -1,95 +1,56 @@
 # Trainingsplan
 
-Moderne iPhone-optimierte Web-App fuer Ale und Nevio. Die App plant Gym, Jogging, Ernaehrung und Wochenfortschritt klar als taeglichen Trainings-Assistenten.
+Minimalistische Trainingsplan-Web-App fuer Ale. Die App zeigt direkt den heutigen Trainingsfokus, eine Wochenuebersicht und den Kraftplan.
 
-## Features
+## Bereiche
 
-- Profilauswahl fuer Ale und Nevio mit gespeichertem Login
-- Automatische Tageserkennung mit konkreter Heute-Karte
-- Ale: 6-Wochen-Recomp-Plan mit Oberkoerper-Fokus, Gym und Ernaehrung
-- Nevio: eigener Krafttrainingsplan bleibt getrennt gespeichert
-- Joggingseite mit lockeren Laeufen, Intervallen und Steigerung
-- Ernaehrungstab mit Protein, Mahlzeiten und Regeln
-- Fortschritt pro Profil getrennt in `localStorage`
-- PWA-Unterstuetzung mit `manifest.json` und Service Worker
-- iPhone-freundliches Dark-Mode-Design mit Safe-Area-Unterstuetzung
+- Heute: Tagesfokus, Aufgaben, Tagesstand und naechster Schritt
+- Woche: Montag bis Sonntag als klarer Wochenplan
+- Kraftplan: Trainingstage mit kompakten Uebungslisten und Saetzen/Wiederholungen
 
-## Live-App
+## Plan
 
-```text
-https://alexandre-trainingsplan-app.vercel.app
-```
-
-Die App funktioniert auch als statisches Frontend auf GitHub Pages.
-
-## Benutzerprofile
-
-### Ale
-
-Ale ist 16 Jahre alt, ca. 183 cm gross und aktuell ca. 67.5 kg nach grossem Abendessen. Der Plan ist auf Koerper-Recomposition ausgelegt: mehr Schulter, Ruecken, Brust und Arme, Bauch ruhiger, aber ohne Crash-Diaet.
-
-- Montag: Push Fokus + lockeres Laufband, Bauch/Core: Plank
+- Montag: Push + Core
 - Dienstag: Regeneration
-- Mittwoch: Pull Fokus + lockeres Laufband, Bauch/Core: Cable Crunch oder Hanging Knee Raises
-- Donnerstag: Beine + Core, Bauch/Core: Leg Raises
-- Freitag: lockerer Lauf + 8 Minuten Bauch/Core, kein Gym
-- Samstag: Upper Pump + Laufband, Bauch/Core: Cable Crunch
-- Sonntag: optional Home Bauch/Core oder frei
+- Mittwoch: Pull + Core
+- Donnerstag: Beine + Core
+- Freitag: Lauf + Bauch
+- Samstag: Upper Pump
+- Sonntag: Home Core optional
 
-Der Bauch/Core-Fokus ist bewusst sichtbar geplant. Bauchuebungen machen die Mitte stabiler und haerter, waehrend Bauchfett vor allem ueber Training, Ernaehrung, Schlaf und Wochenbilanz weniger wird.
+## Speicherung
 
-Ernaehrung fuer Ale:
-
-- Protein: ca. 110-130 g pro Tag
-- Keine aggressive Diaet, weil Gewicht und Groesse eher leicht sind
-- Kohlenhydrate rund ums Training fuer Leistung
-- 8-10 Stunden Schlaf als Ziel
-- Kreatin optional 3-5 g taeglich, genug trinken
-
-### Nevio
-
-Nevio hat weiterhin eine eigene Fortschrittsspeicherung und seinen eigenen Krafttrainingsplan mit Ruecken/Brust, Beine/Core, Arme/Schultern und Cardio/Calisthenics.
+Erledigte Tagesaufgaben und abgehakte Uebungen werden lokal im Browser gespeichert. Die App nutzt weiterhin `localStorage` und speichert unter Ale.
 
 ## Lokal starten
 
-Das Frontend besteht aus HTML, CSS und JavaScript.
+```bash
+npm install
+npm run build
+```
 
-1. Ordner oeffnen.
-2. `index.html` direkt im Browser starten.
-
-Fuer lokale Tests mit Server:
+Optional lokal servieren:
 
 ```bash
 python -m http.server 8080
 ```
 
-Danach oeffnen:
+Dann oeffnen:
 
 ```text
 http://localhost:8080
 ```
 
-## App auf iPhone Home-Bildschirm hinzufuegen
+## iPhone Home-Bildschirm
 
 1. Safari oeffnen.
-2. Seite oeffnen.
+2. App-URL oeffnen.
 3. Teilen-Button druecken.
 4. "Zum Home-Bildschirm" waehlen.
 5. Hinzufuegen druecken.
 
-Wenn vorher ein altes Icon auf dem Home-Bildschirm war, dieses zuerst loeschen und die App neu hinzufuegen.
+Wenn ein altes Icon vorhanden ist, zuerst das alte Home-Screen-Icon loeschen und danach neu hinzufuegen.
 
-## Online und Offline
+## Deployment
 
-Grundfunktionen wie Login, manuelles Abhaken und Fortschritt funktionieren ueber `localStorage`. Der Service Worker nutzt Network-First fuer HTML, CSS, JS und Manifest, damit iPhones neue Versionen schneller laden.
-
-## GitHub Pages
-
-Wenn GitHub Pages nicht automatisch aktiviert wurde:
-
-1. Repository auf GitHub oeffnen.
-2. `Settings` oeffnen.
-3. `Pages` auswaehlen.
-4. Unter `Build and deployment` als Source `Deploy from a branch` waehlen.
-5. Branch `main` und Ordner `/root` auswaehlen.
-6. `Save` klicken.
+Die App ist als statisches Frontend fuer GitHub Pages und Vercel geeignet. Nach einem Push auf `main` kann Vercel automatisch neu deployen.

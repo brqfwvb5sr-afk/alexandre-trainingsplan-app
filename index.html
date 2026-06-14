@@ -3,108 +3,56 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#07111f">
+    <meta name="theme-color" content="#0a0d12">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Trainingsplan">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="description" content="Uebersichtliche iPhone-Trainingsplan-Web-App fuer Ale und Nevio.">
+    <meta name="description" content="Minimalistische Trainingsplan-App fuer Ale.">
     <title>Trainingsplan</title>
     <link rel="apple-touch-icon" href="./apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" href="./favicon.png">
-    <link rel="manifest" href="./manifest.json?v=11">
-    <link rel="stylesheet" href="./style.css?v=11">
+    <link rel="manifest" href="./manifest.json?v=12">
+    <link rel="stylesheet" href="./style.css?v=12">
   </head>
   <body>
-    <div class="app-background" aria-hidden="true"></div>
-
-    <main class="phone-shell" id="app">
-      <section class="login-view" id="loginView" aria-labelledby="loginTitle">
-        <div class="login-panel glass-panel">
-          <p class="eyebrow">Training</p>
-          <h1 id="loginTitle">Trainingsplan</h1>
-          <p class="login-subtitle">Wähle dein Profil</p>
-
-          <div class="profile-grid" aria-label="Profile">
-            <button class="profile-card" type="button" data-login-profile="ale">
-              <span class="profile-mark">A</span>
-              <span class="profile-name">Ale</span>
-              <span class="profile-meta">Jogging, Kraft, Fortschritt</span>
-            </button>
-            <button class="profile-card" type="button" data-login-profile="nevio">
-              <span class="profile-mark">N</span>
-              <span class="profile-name">Nevio</span>
-              <span class="profile-meta">Joggingplan, eigener Fortschritt</span>
-            </button>
-          </div>
-
-          <form class="login-form" id="loginForm" autocomplete="off">
-            <label for="usernameInput">Benutzername</label>
-            <div class="input-row">
-              <input id="usernameInput" name="username" type="text" inputmode="text" placeholder="ale oder nevio" aria-describedby="loginMessage">
-              <button class="primary-button" type="submit">Öffnen</button>
-            </div>
-            <p class="form-message" id="loginMessage" role="status" aria-live="polite"></p>
-          </form>
+    <main class="app-shell" id="app">
+      <header class="app-header">
+        <div>
+          <p class="overline">Trainingsplan</p>
+          <h1>Ale</h1>
         </div>
+        <p class="version-pill" id="versionLabel">Version 12</p>
+      </header>
+
+      <section class="tab-panel is-active" id="tab-today" data-panel="today" aria-labelledby="nav-today">
+        <div id="todayContent"></div>
       </section>
 
-      <section class="app-view is-hidden" id="mainView" aria-label="Trainingsplan App">
-        <div class="content-stack">
-          <section class="tab-panel is-active" id="tab-today" data-panel="today" aria-labelledby="nav-today">
-            <div id="todayContent"></div>
-          </section>
-
-          <section class="tab-panel" id="tab-week" data-panel="week" aria-labelledby="nav-week">
-            <div id="weekContent"></div>
-          </section>
-
-          <section class="tab-panel" id="tab-jogging" data-panel="jogging" aria-labelledby="nav-jogging">
-            <div id="joggingContent"></div>
-          </section>
-
-          <section class="tab-panel" id="tab-strength" data-panel="strength" aria-labelledby="nav-strength">
-            <div id="strengthContent"></div>
-          </section>
-
-          <section class="tab-panel" id="tab-nutrition" data-panel="nutrition" aria-labelledby="nav-nutrition">
-            <div id="nutritionContent"></div>
-          </section>
-
-          <section class="tab-panel" id="tab-progress" data-panel="progress" aria-labelledby="nav-progress">
-            <div id="progressContent"></div>
-          </section>
-        </div>
-
-        <nav class="bottom-tabs" aria-label="Hauptnavigation">
-          <button class="tab-button is-active" id="nav-today" type="button" data-tab="today">
-            <span class="tab-icon tab-icon-today" aria-hidden="true"></span>
-            <span>Heute</span>
-          </button>
-          <button class="tab-button" id="nav-week" type="button" data-tab="week">
-            <span class="tab-icon tab-icon-week" aria-hidden="true"></span>
-            <span>Woche</span>
-          </button>
-          <button class="tab-button" id="nav-jogging" type="button" data-tab="jogging">
-            <span class="tab-icon tab-icon-jogging" aria-hidden="true"></span>
-            <span>Jogging</span>
-          </button>
-          <button class="tab-button" id="nav-strength" type="button" data-tab="strength">
-            <span class="tab-icon tab-icon-strength" aria-hidden="true"></span>
-            <span>Kraft</span>
-          </button>
-          <button class="tab-button" id="nav-nutrition" type="button" data-tab="nutrition">
-            <span class="tab-icon tab-icon-nutrition" aria-hidden="true"></span>
-            <span>Essen</span>
-          </button>
-          <button class="tab-button" id="nav-progress" type="button" data-tab="progress">
-            <span class="tab-icon tab-icon-progress" aria-hidden="true"></span>
-            <span>Status</span>
-          </button>
-        </nav>
+      <section class="tab-panel" id="tab-week" data-panel="week" aria-labelledby="nav-week">
+        <div id="weekContent"></div>
       </section>
+
+      <section class="tab-panel" id="tab-strength" data-panel="strength" aria-labelledby="nav-strength">
+        <div id="strengthContent"></div>
+      </section>
+
+      <nav class="bottom-nav" aria-label="Hauptnavigation">
+        <button class="nav-button is-active" id="nav-today" type="button" data-tab="today">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Heute</span>
+        </button>
+        <button class="nav-button" id="nav-week" type="button" data-tab="week">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Woche</span>
+        </button>
+        <button class="nav-button" id="nav-strength" type="button" data-tab="strength">
+          <span class="nav-dot" aria-hidden="true"></span>
+          <span>Kraftplan</span>
+        </button>
+      </nav>
     </main>
 
-    <script src="./app.js?v=11" defer></script>
+    <script src="./app.js?v=12" defer></script>
   </body>
 </html>

@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "check": "node --check app.js && node --check service-worker.js"
+    "check": "node --check app.js && node --check service-worker.js",
+    "lint": "npm run check",
+    "build": "npm run check"
   }
 }
